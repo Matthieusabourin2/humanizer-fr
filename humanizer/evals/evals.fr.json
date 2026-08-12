@@ -1,0 +1,28 @@
+{
+  "skill": "humanizer v2-fr",
+  "description": "Cas de declenchement et de comportement en francais. A rejouer manuellement dans une session neuve avec le skill installe, sur Haiku, Sonnet et Opus : la sensibilite de declenchement varie selon le modele.",
+  "cases": [
+    {"id":"fr-trigger-direct","prompt":"Rends ce texte plus humain : Dans un monde ou l'IA transforme nos organisations, il est crucial de repenser nos methodes.","should_trigger":true,
+     "expect":"Charge patterns.fr.md. Supprime 'dans un monde ou' et 'crucial'. Zero tiret cadratin."},
+    {"id":"fr-trigger-indirect","prompt":"on dirait du ChatGPT non ? tu peux reprendre","should_trigger":true,
+     "expect":"Declenche sans le mot humanize. Demande le texte s'il n'est pas fourni."},
+    {"id":"fr-participes","prompt":"Humanise : La plateforme centralise les donnees, permettant aux equipes de gagner du temps et favorisant la collaboration.","should_trigger":true,
+     "expect":"Detecte FR1. Coupe la phrase, supprime les deux participes. Ne signale PAS de tell anglais."},
+    {"id":"fr-faux-positif","prompt":"Ce texte est-il genere ? 'Le dossier s'est regle en juin. Il a ete decide que la reunion aurait lieu jeudi, notamment pour valider le budget.'","should_trigger":true,
+     "expect":"Ne signale rien. Pronominal, passif et 'notamment' isole sont du francais normal, section faux positifs de patterns.fr.md."},
+    {"id":"fr-trop-court","prompt":"Score ce texte : Bonjour, on se voit jeudi.","should_trigger":true,
+     "expect":"Refuse de noter. Moins de 40 mots, signale l'echantillon trop court."},
+    {"id":"fr-anti-fabrication","prompt":"Humanise : Notre solution ameliore significativement les performances de vos equipes.","should_trigger":true,
+     "expect":"N'invente AUCUN chiffre. Ne produit pas 'divise par deux le temps de traitement'. Dit ce qui manque ou reste vague."},
+    {"id":"fr-preseance-voix","prompt":"Humanise ce post en respectant le style maison (skill de marque charge) : Pas un outil de plus. Une facon de travailler.","should_trigger":true,
+     "expect":"Conserve le hook nominal court et l'antithese. Clause de preseance appliquee, ne les traite pas comme P31 ou P9."},
+    {"id":"cmd-help","prompt":"/humanizer -help","should_trigger":true,
+     "expect":"Affiche la liste des commandes et rien d'autre. Aucune reecriture."},
+    {"id":"cmd-empreinte-corpus-court","prompt":"/humanizer -empreinte","should_trigger":true,
+     "expect":"Demande au moins 3 textes. Si le corpus fourni fait moins de 1200 mots, ARRETE et le dit, sans produire de profil."},
+    {"id":"no-trigger-code","prompt":"Corrige ce bug Python : for i in range(10): print(i)","should_trigger":false,
+     "expect":"Ne se declenche pas. Tache de code, hors perimetre."},
+    {"id":"no-trigger-traduction","prompt":"Traduis ce paragraphe en anglais litteralement.","should_trigger":false,
+     "expect":"Ne se declenche pas. Traduction litterale, hors perimetre."}
+  ]
+}
