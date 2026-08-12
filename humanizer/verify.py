@@ -222,6 +222,89 @@ if CLI.exists():
 else:
     print("  (CLI absent, section ignorée)")
 
+
+print("\n[14] Porte chiffree v2.2 (budgets, clusters, gate.py, pieges)")
+check("P54 present au catalogue", "P54: Kicker Cadence" in skill)
+check("compteur de patterns a 54", "Pattern catalog (54 total)" in skill and "P44 to P54" in skill)
+check("section Density budgets presente", "### Density budgets (ceilings, not targets)" in skill)
+check("scan de cluster local present", "### The local cluster scan" in skill)
+check("numbers gate obligatoire en rewrite", "### The numbers gate (mandatory in rewrite and edit modes)" in skill)
+check("plafond de frequence sur les signatures", "attested frequency and on its attested surface" in skill)
+check("portee du zero-tolerance sur signatures", "signature blocks, taglines and boilerplate included" in skill)
+check("plafonds pas cibles", "Ceilings, not targets" in skill)
+check("gate.py reference depuis SKILL.md", "scripts/gate.py" in skill)
+
+gp = ROOT / "scripts" / "gate.py"
+check("scripts/gate.py existe", gp.exists())
+if gp.exists():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("gate", gp)
+    gate = importlib.util.module_from_spec(spec); spec.loader.exec_module(gate)
+    WRAP = ("Here is the launch plan I promised you after the call, with the numbers we "
+            "discussed and the calendar the team validated on Monday. Nothing in it requires "
+            "a decision from your side before the end of the month, and the budget line stays "
+            "exactly where the committee set it in April.\n\n")
+    bad = WRAP + ("Phase one: we test. Before any money moves. Not a full rollout, just ten "
+                  "users and a spreadsheet. The real launch happens later, while the data is "
+                  "already coming in.")
+    good = WRAP + ("Phase one: we test, before any money moves. No rollout at this point, ten "
+                   "users and a spreadsheet. The real launch happens later, while the data is "
+                   "already coming in.")
+    rb, rg = gate.analyze(bad), gate.analyze(good)
+    check("cluster detecte sur l'exemple 'avant'", rb["clusters"] >= 1 and not rb["pass"], str(rb["violations"]))
+    check("exemple 'apres' conforme", rg["pass"], str(rg["violations"]))
+    sig = WRAP + ("The invoices went out this morning with the usual terms, and accounting has "
+                  "both references filed.\n\nKarim Benali\nSorelis Group \u2014 Operational excellence, delivered.")
+    rs = gate.analyze(sig)
+    check("cadratin de signature detecte", rs["dashes"] >= 1 and not rs["pass"], str(rs))
+    slop_fr = ("Dans un monde ou tout evolue rapidement, notre plateforme incontournable permet de "
+               "revolutionner vos usages quotidiens, offrant une experience fluide et garantissant des "
+               "resultats mesurables pour vos equipes. Force est de constater que cette approche change "
+               "la donne, et il convient de noter que cette solution saura repondre a vos enjeux.")
+    rf = gate.analyze(slop_fr, fr=True)
+    check("tier 1 FR detecte", len(rf["tier1"]) >= 3, str(rf["tier1"]))
+    human = ("Nadia,\n\nThe contract came back signed this morning, both pages initialed, and I "
+             "filed the scanned copy in the shared folder under the client name like we agreed. Their "
+             "accountant wants the first invoice split between two cost centers, so I need the second "
+             "reference before I send anything.\n\nSee you Thursday.")
+    rh = gate.analyze(human)
+    check("controle humain court sans faux positif", rh["pass"], str(rh["violations"]))
+    quoted = WRAP + ('The vendor reply said "Our platform \u2014 a testament to seamless innovation \u2014 '
+                     'will delve into your needs" and nothing else. The demo in March still solved the '
+                     'routing problem in twenty minutes, so I will ask for a trial account on Thursday.')
+    rq = gate.analyze(quoted)
+    check("citations masquees (cadratin et delve cites non comptes)", rq["pass"], str(rq["violations"]))
+    rshort = gate.analyze("Thanks Phil, talk Monday.")
+    check("plancher 40 mots respecte par gate.py", "error" in rshort, str(rshort))
+
+tr = ROOT / "evals" / "traps.json"
+check("evals/traps.json existe", tr.exists())
+if tr.exists():
+    tj = json.loads(tr.read_text(encoding="utf-8"))
+    traps = tj["cases"]
+    check("au moins 10 pieges", len(traps) >= 10, str(len(traps)))
+    check("piege faux-positif present", any("false-positive" in c["id"] for c in traps))
+    check("piege cadratin de signature", any("signature-dash" in c["id"] for c in traps))
+    check("piege cluster local", any("cluster" in c["id"] for c in traps))
+    check("piege surface de profil", any("surface" in c["id"] for c in traps))
+    check("piege densite de signature", any("density" in c["id"] for c in traps))
+    check("format d'eval officiel (query + expected_behavior)",
+          all(c.get("query") and c.get("expected_behavior") for c in traps))
+    check("protocole de rejeu Claude A/B multi-modeles", "Haiku" in tj.get("replay_protocol", "")
+          and "session NEUVE" in tj.get("replay_protocol", ""))
+    check("regle d'edition TDD documentaire", "nouvelle section" in tj.get("replay_protocol", ""))
+
+
+print("\n[15] Conformite doc officielle skill-authoring (12/08/2026)")
+body = skill.split("---", 2)[2]
+check("corps de SKILL.md sous 500 lignes", len(body.splitlines()) <= 500,
+      f"{len(body.splitlines())} lignes")
+check("table de rationalisations presente", "### Rationalization table" in skill)
+check("au moins 6 excuses contrees", skill.count("| \"") >= 6 or skill.count('| "') >= 6)
+check("P54 sans date perimee", "circa 20" not in skill)
+check("constantes de gate.py justifiees", "Ousterhout" in (ROOT / "scripts" / "gate.py").read_text(encoding="utf-8"))
+check("terme canonique landed ending dominant",
+      skill.lower().count("landed ending") >= 4)
 print("\n" + "=" * 60)
 print(f"{PASSED} tests passés, {len(FAILURES)} échecs")
 if FAILURES:

@@ -1,0 +1,108 @@
+{
+ "skills": [
+  "humanizer"
+ ],
+ "version": "2.3.0-fr",
+ "description": "Pieges de regression distilles d'echecs reels (12/08/2026 : passe cosmetique sur un mail commercial EN, cadratin de signature exempte a tort, cluster local non vu, contrainte de surface du profil ignoree). Chaque cas suit le format d'eval officiel Anthropic (query + expected_behavior). Les cas gate:true sont verifiables par scripts/gate.py sur la sortie.",
+ "replay_protocol": "Protocole Claude A/B officiel : ne jamais faire noter le skill par l'instance qui vient de l'editer. Rejouer chaque query dans une session NEUVE avec le skill installe (Claude Code : claude -p \"<query>\" ; claude.ai : nouvelle conversation), sur Haiku, Sonnet et Opus, car la sensibilite varie selon le modele. Verifier chaque assertion d'expected_behavior, puis passer la sortie a scripts/gate.py quand gate:true. Regle d'edition (TDD documentaire) : toute nouvelle section du SKILL.md exige un piege ici qui echouait sans elle.",
+ "cases": [
+  {
+   "id": "trap-structural-no-dash",
+   "gate": true,
+   "query": "Humanize this email: [texte de ~700 mots, zero cadratin, mais 10+ constructions 'not X, but Y' et une punchline courte en fin de chaque paragraphe]",
+   "expected_behavior": [
+    "Ne declare PAS le texte propre parce que les cadratins sont absents.",
+    "Le numbers gate sort contrast > budget et kicker_ratio > 0.25.",
+    "La reecriture convertit l'excedent en affirmations directes et laisse la plupart des paragraphes finir sans atterrissage.",
+    "Reference : v1 du 12/08 (12 contrastes, 18/24 punchlines conservees)."
+   ]
+  },
+  {
+   "id": "trap-signature-dash",
+   "gate": true,
+   "query": "Humanize this email ending with: Sorelis Group — Operational excellence, delivered.",
+   "expected_behavior": [
+    "Le cadratin de la ligne de signature est supprime (signature empilee ou deux-points).",
+    "Aucune exemption 'mobilier de marque' sans attestation du profil charge.",
+    "gate.py doit sortir dashes=0 sur le resultat."
+   ]
+  },
+  {
+   "id": "trap-local-cluster",
+   "gate": true,
+   "query": "Humanize: Phase one: we test. Before any money moves. Not a full rollout, just ten users and a spreadsheet. The real launch happens later, while the data is already coming in. [dans un texte plus long par ailleurs propre]",
+   "expected_behavior": [
+    "Le scan de cluster local detecte 2 familles en 4 phrases (fragment dramatique + Not X just Y) meme si les totaux globaux passent.",
+    "Reecriture locale : fragment replie dans sa phrase, contraste en coordination simple, un seul closer elegant conserve.",
+    "gate.py : clusters=0 apres."
+   ]
+  },
+  {
+   "id": "trap-surface-profile",
+   "gate": false,
+   "query": "Humanise ce MAIL avec un profil auteur charge : Le discernement. L'intuition. Le jugement. Ces choses-la se forgent. [gradation en fragments dans un mail]",
+   "expected_behavior": [
+    "Check 6 du numbers gate : R-08 atteste la gradation en fragments en POST uniquement, jamais en mail.",
+    "Violation de surface signalee, gradation repliee en prose pour la surface mail.",
+    "Ne pas la conserver au titre de trait signature."
+   ]
+  },
+  {
+   "id": "trap-signature-density",
+   "gate": false,
+   "query": "Humanise ce texte de 400 mots avec un profil auteur charge : il contient 8 parallelismes negatifs signature.",
+   "expected_behavior": [
+    "La preservation de signature s'applique a la FREQUENCE attestee (1 par texte, 2 max, a l'echelle de la longueur), pas a la densite du texte source.",
+    "L'excedent est converti en affirmations directes.",
+    "Une signature a 4x sa densite mesuree est un tell habille en auteur."
+   ]
+  },
+  {
+   "id": "trap-false-positive-human",
+   "gate": true,
+   "query": "Does this read like AI? [mail humain avec details concrets, dates, prenoms, une phrase courte de cloture]",
+   "expected_behavior": [
+    "gate.py PASS.",
+    "Le skill dit que le texte porte deja un pouls et ne reecrit pas, ou propose des retouches minimales.",
+    "Une phrase de cloture courte isolee n'est pas un tell (ratio kicker juge a partir de 5 paragraphes)."
+   ]
+  },
+  {
+   "id": "trap-quoted-ai",
+   "gate": true,
+   "query": "Rewrite my message but the quoted vendor reply inside double quotes contains 'delve', 'testament' and an em dash.",
+   "expected_behavior": [
+    "Le contenu entre guillemets n'est jamais reecrit ni compte : masquage avant scan.",
+    "gate.py PASS sur un texte propre autour d'une citation sale."
+   ]
+  },
+  {
+   "id": "trap-fabrication",
+   "gate": false,
+   "query": "Humanize: Our method significantly improves team performance.",
+   "expected_behavior": [
+    "Aucun chiffre invente (regression D1).",
+    "Le Concretizer ne remplace une abstraction que par un specifique deja present dans la source.",
+    "La reponse dit ce qui manque ou reste vague."
+   ]
+  },
+  {
+   "id": "trap-too-short",
+   "gate": true,
+   "query": "Score this: Thanks Phil, talk Monday.",
+   "expected_behavior": [
+    "Refus de noter et de porter un jugement : moins de 40 mots.",
+    "gate.py sort 'sample too short'."
+   ]
+  },
+  {
+   "id": "trap-zero-punch",
+   "gate": true,
+   "query": "Humanize this quarterly report paragraph [prose plate, zero contraste, zero punchline, informative].",
+   "expected_behavior": [
+    "Plafonds, pas cibles : le skill n'injecte PAS de punchlines ni d'antitheses pour 'humaniser'.",
+    "gate.py PASS avant comme apres ; les retouches restent lexicales et de rythme si necessaires."
+   ]
+  }
+ ]
+}

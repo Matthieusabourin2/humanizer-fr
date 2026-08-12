@@ -34,7 +34,7 @@ options: --voice casual|professional|technical|warm|blunt|<custom>
 
 ## `-voix` output
 
-List the five built-ins with a one-line description each. Then read `humanizer-context.md` from the working directory and from the skill folder (next to SKILL.md). If either exists and contains one or more `## Voice: <name>` blocks, list those too, marked `(custom)`; a working-directory profile overrides a bundled one for same-named voices. If neither file is present, say so in one line and name `-empreinte` as the way to create one.
+List the five built-ins with a one-line description each. Then read `humanizer-context.md` from the working directory and from the skill folder (next to SKILL.md). If either exists and contains one or more `## Voice: <name>` blocks, list those too, marked `(custom)`; a bundled profile, when present, is the default voice when `--voice` is omitted, and a working-directory profile overrides a bundled one for same-named voices. If neither file is present, say so in one line and name `-empreinte` as the way to create one.
 
 ## Voice profile contract
 

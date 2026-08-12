@@ -1,10 +1,10 @@
 ---
 name: humanizer
 description: |
-  Detects 53 AI writing patterns and rewrites text in five voice profiles so it reads like a specific human wrote it, with an optional 0-100 AI-tell score. Use when text sounds AI-generated or like a chatbot, when preparing a blog post, README or LinkedIn post for publication, when auditing prose for AI tells, or when editing a Markdown file in place. Triggers on "humanize this", "make this sound less AI", "make this sound human", "remove AI tells", "does this read like ChatGPT". Also works on French and triggers on "rends ce texte plus humain", "on dirait du ChatGPT", "humanise ce texte", "ca sonne genere"; for French input load references/patterns.fr.md before scanning. Single-dash commands include -help, -empreinte (build a voice profile from your own corpus), -voix, -score, -fr and -audit. Do NOT use for code, for literal translation, for text quoted from another author, or for prose already carrying a settled human voice.
+  Detects 54 AI writing patterns and rewrites text in five voice profiles so it reads like a specific human wrote it, with an optional 0-100 AI-tell score. Use when text sounds AI-generated or like a chatbot, when preparing a blog post, README or LinkedIn post for publication, when auditing prose for AI tells, or when editing a Markdown file in place. Triggers on "humanize this", "make this sound less AI", "make this sound human", "remove AI tells", "does this read like ChatGPT". Also works on French and triggers on "rends ce texte plus humain", "on dirait du ChatGPT", "humanise ce texte", "ca sonne genere"; for French input load references/patterns.fr.md before scanning. Single-dash commands include -help, -empreinte (build a voice profile from your own corpus), -voix, -score, -fr and -audit. Do NOT use for code, for literal translation, for text quoted from another author, or for prose already carrying a settled human voice.
 user-invocable: true
 metadata:
-  version: "2.1.0-fr"
+  version: "2.3.0-fr"
   upstream: "Aboudjem/humanizer-skill 0.5.0"
 argument-hint: '"your text" [--mode detect|rewrite|edit] [--voice casual|professional|technical|warm|blunt] [--file path/to/file.md] [--aggressive] [--iterate N] [--score] [--purpose essay|email|marketing|technical|general] [--openings N] [--ignore-code] [--ignore-quotes]'
 allowed-tools:
@@ -20,7 +20,7 @@ allowed-tools:
 
 <!-- v2.0-fr : upstream Aboudjem/humanizer-skill 0.5.0 + French layer + voice-skill precedence -->
 
-Take text that smells like a chatbot wrote it and rewrite it as a specific, opinionated human. Detects 53 AI writing patterns, scores them 0-100, applies a chosen voice profile, and varies sentence-length burstiness so the result reads as written by a person.
+Take text that smells like a chatbot wrote it and rewrite it as a specific, opinionated human. Detects 54 AI writing patterns, scores them 0-100, applies a chosen voice profile, and varies sentence-length burstiness so the result reads as written by a person.
 
 ## Quick reference
 
@@ -42,7 +42,7 @@ Take text that smells like a chatbot wrote it and rewrite it as a specific, opin
 | `warm` | "We" language, empathy, short paragraphs | Tutorials, onboarding |
 | `blunt` | Shortest sentences, no hedging, active voice | Internal comms, reviews |
 
-**Pattern catalog (53 total)**
+**Pattern catalog (54 total)**
 
 | Category | Count | IDs |
 |:---------|:------|:----|
@@ -51,7 +51,7 @@ Take text that smells like a chatbot wrote it and rewrite it as a specific, opin
 | Communication | 3 | P19 to P21 |
 | Filler & Hedging | 9 | P22 to P30 |
 | Emerging | 13 | P31 to P43 |
-| Craft & Forensic | 10 | P44 to P53 |
+| Craft & Forensic | 11 | P44 to P54 |
 
 Deep dives, before/after examples, and full trigger lists for every pattern live in [`references/patterns.md`](references/patterns.md), loaded on demand. The French catalog is in [`references/patterns.fr.md`](references/patterns.fr.md). This file is standalone and needs neither.
 
@@ -96,7 +96,7 @@ In Step 5, ask a second question alongside "what still reads as AI": **"does the
 
 **French input.** If the text to humanize is in French, read `references/patterns.fr.md` before Step 2 and use the FR1-FR14 catalog and its three-tier vocabulary **instead of** the English word lists in P7 and the tiered-confidence block. Three English patterns do not transpose and are skipped on French text: P17 (Title Case), P26 (hyphenated word pairs), P8 (copula avoidance). Everything else in this skill applies unchanged. Never mix the two vocabularies: flagging `delve` in French prose produces zero hits and a false sense of a clean pass.
 
-**Precedence over a voice skill.** When a dedicated voice or brand skill is loaded in the same session (for example a brand style skill like `style-acme`), that skill owns the positive form and this one owns the negative form only. Concretely, on content covered by a voice skill, do **not** touch: deliberate rule-of-three when the voice skill prescribes it, signature antitheses and negative parallelisms, short isolated opening hooks, rhetorical closings, and any attested signature formula. Confine yourself to the tells the voice skill does not govern: AI vocabulary, participle chains, empty nominalizations, filler, hedging, signposting, translation calques, and typography. A voice skill exists to build a recognizable signature; scrubbing that signature as a tell is the failure mode this note prevents.
+**Precedence over a voice skill.** When a dedicated voice or brand skill is loaded in the same session (for example a brand style skill like `style-acme`), that skill owns the positive form and this one owns the negative form only. Concretely, on content covered by a voice skill, do **not** touch: deliberate rule-of-three when the voice skill prescribes it, signature antitheses and negative parallelisms, short isolated opening hooks, rhetorical closings, and any attested signature formula. Confine yourself to the tells the voice skill does not govern: AI vocabulary, participle chains, empty nominalizations, filler, hedging, signposting, translation calques, and typography. A voice skill exists to build a recognizable signature; scrubbing that signature as a tell is the failure mode this note prevents. The mirror failure is keeping it at machine density: preserving a signature means preserving it at its attested frequency and on its attested surface. Profile FRÉQUENCE figures and surface scopes (a device attested in posts only, never in mail) are hard ceilings on the output; a signature move at four times its measured density, or on an excluded surface, is a tell wearing the author's clothes. Convert the excess to plain statements. Rhetorical effectiveness is never a preservation criterion. Attested authorship is.
 
 If no voice skill is loaded, ignore this paragraph and apply the full catalog.
 
@@ -106,7 +106,7 @@ Read this before you change a single word. A ruthless editor who over-edits is w
 
 ### What NOT to flag (false positives)
 
-- **Flag clusters, not isolated tells.** One em dash, one "crucial", one three-item list is how humans write too. Flag a pattern only when several co-occur in the same passage.
+- **Flag clusters, not isolated tells.** One em dash, one "crucial", one three-item list is how humans write too. Flag a pattern only when several co-occur in the same passage. (This restraint governs detection; its rewrite-side mirror, the local cluster scan in Step 2, governs what may survive.)
 - **Perfect grammar is not AI.** Clean spelling, correct punctuation, and a consistent Oxford comma are signs of a careful writer or a copy editor, not proof of a machine.
 - **A single em dash, curly quote, or tidy sentence alone means nothing.** These matter only as part of a cluster.
 - **Never rewrite watched phrases inside quotes, block quotes, titles, headings, code, or examples.** If "delve" appears in a direct quotation, a book title, a variable name, or a pasted sample of AI text the author is critiquing, leave it exactly as written. Rewriting quoted or code content changes meaning and breaks references. When `--ignore-code` or `--ignore-quotes` is set, mask those spans before you even scan.
@@ -125,6 +125,19 @@ When you see these, protect them. They are hard for a model to fake and they are
 - **Content written or edited before late 2022:** it predates the tools you are looking for. Do not "fix" it into sounding newer.
 
 If a passage is already carrying a pulse, the correct edit is often no edit.
+
+### Rationalization table (excuses observed in the field, and their answers)
+
+All six were used, in one real session, to wave violations through. The answer column wins.
+
+| Excuse | Answer |
+|:-------|:-------|
+| "It's brand furniture, a lockup" | Only a loaded profile can attest a lockup. Unattested = tell. |
+| "It's the author's signature" | Signatures survive at attested FRÉQUENCE and surface, not at source density. |
+| "Each device is defensible on its own" | The cluster scan judges windows, not devices. |
+| "The rhetoric is too effective to cut" | Effectiveness is not a preservation criterion; the persuasion engine IS the tell. |
+| "The genre demands the polish" | Genre governs structure (headers, steps), never the tell budget. |
+| "Dashes are gone, so it's clean" | Typography is one check of six. Produce the other five numbers. |
 
 ## Operating principles
 
@@ -147,7 +160,7 @@ Extract from `$ARGUMENTS`:
 
 - **Text**: The content to humanize. Everything not part of a flag. If no text and no `--file`, prompt: "Paste the text you want me to humanize, or pass `--file path/to/file.md`."
 - **--mode**: `detect` (scan and report, no changes), `rewrite` (full rewrite, the default), or `edit` (read `--file` and apply in-place changes with the Edit tool).
-- **--voice**: One of `casual`, `professional`, `technical`, `warm`, `blunt`. Default: infer from input text register.
+- **--voice**: One of `casual`, `professional`, `technical`, `warm`, `blunt`, or a custom profile from `humanizer-context.md`. Default: the bundled profile when one ships next to this SKILL.md (a working-directory profile takes precedence), unless a dedicated voice or brand skill governs the content (see skill precedence) or the text clearly belongs to another author or brand, in which case infer from input text register.
 - **--file**: Path to a file to humanize. If provided, read the file as input. With `--mode edit`, apply changes in place.
 - **--aggressive**: Rewrite more heavily (shorter sentences, more personality, kill all hedging). Default: balanced.
 - **--iterate N**: Run detect, rewrite, detect up to N times (N <= 3). Stop early when the report finds zero patterns. Default: 1.
@@ -165,7 +178,7 @@ Store parsed values. Proceed to Step 2.
 
 ## Step 2: Detect AI Patterns
 
-Scan the input text for all 53 patterns below. Track each match with its location and category. Each entry is a compact trigger summary; the full trigger lists, the "what's happening" notes, and before/after examples live in [`references/patterns.md`](references/patterns.md).
+Scan the input text for all 54 patterns below. Track each match with its location and category. Each entry is a compact trigger summary; the full trigger lists, the "what's happening" notes, and before/after examples live in [`references/patterns.md`](references/patterns.md).
 
 ### CONTENT PATTERNS
 
@@ -187,7 +200,7 @@ Scan the input text for all 53 patterns below. Track each match with its locatio
 
 ### LANGUAGE & STYLE PATTERNS
 
-**P9: Negative Parallelisms.** Once is fine, twice is a pattern, three times is a chatbot. Fix: state the point directly without the theatrical build-up. Triggers: "not only X but Y", "it's not just X, it's Y", "it's not merely X, it's Y".
+**P9: Negative Parallelisms and the Contrast Engine.** Once is fine, twice is a pattern, three times is a chatbot. Count the whole contrast family as one budget, not each template separately: "not only X but Y", "it's not just X, it's Y", "not because X, but because Y", "X, not Y" as a sentence-final punch, "Not a X, just a Y", and the two-sentence flip ("It's not X. It's Y."). Softer forms (rather than, instead of) count only when they pile onto the hard ones. Fix: keep the one or two that carry the argument, convert the rest to direct statements. Budget: see Density budgets below.
 
 **P10: Rule of Three.** Forced triads to sound authoritative. Fix: use the natural number; two and four are underrated. Triggers: three-item lists of abstract nouns ("innovation, inspiration, and industry insights").
 
@@ -195,7 +208,7 @@ Scan the input text for all 53 patterns below. Track each match with its locatio
 
 **P12: False Ranges.** "From X to Y" where X and Y are not on a real spectrum. Fix: name the actual items. Triggers: forced "from ... to ..." spans.
 
-**P13: Em Dash Ban.** Em-dash overuse mimicking punchy editorial writing; the single most common formatting tell. Fix: replace with commas, colons, or hyphens. Triggers: any em dash (U+2014). Zero tolerance.
+**P13: Em Dash Ban.** Em-dash overuse mimicking punchy editorial writing; the single most common formatting tell. Fix: replace with commas, colons, or hyphens. Triggers: any em dash (U+2014). Zero tolerance, and zero tolerance means every character of the output: subject lines, headings, signature blocks, taglines and boilerplate included. A brand lockup is only exempt when a loaded voice profile attests that exact punctuation; "it looks like brand furniture" is not an exemption.
 
 **P14: Boldface/Formatting Overuse.** Mechanical emphasis and decoration standing in for clear writing. Fix: use bold sparingly, once per section. Triggers: bold on every other phrase, emoji-decorated or emoji-bulleted headers, skipped heading levels, a horizontal rule before every heading, tables where prose reads better, Markdown in non-Markdown contexts.
 
@@ -285,6 +298,8 @@ Scan the input text for all 53 patterns below. Track each match with its locatio
 
 **P53: Hedged-Enumeration Openers.** Announcing a vague list instead of committing to an answer. Fix: give the specific answer first; drop the throat-clearing. Triggers: "There are several ways to", "There are a few things to consider", "In general,", "It is generally a good idea to", "Generally speaking,".
 
+**P54: Kicker Cadence (Landed Endings).** Every paragraph closing on a short engineered landed ending, the drum-machine signature of assisted drafting. One island of punch reads human; one per paragraph reads machine, however good each line is. Fix: let most paragraphs simply end on their last piece of information; keep at most one landed ending per four body paragraphs, never two in a row, placed where the argument peaks. Triggers: final sentence of 9 words or fewer in over a quarter of body paragraphs, double-tap endings ("Nobody else sees that. I do."), a balanced closing clause on most paragraphs.
+
 ### Tiered-confidence vocabulary (refines P7)
 
 Not every AI word is equally damning. Flag by tier to cut false positives.
@@ -294,6 +309,14 @@ Not every AI word is equally damning. Flag by tier to cut false positives.
 - **Tier 3, context only (never flag alone):** key, important, significant, various, effective, valuable, powerful, essential. Ordinary words. Flag only when they cluster with Tier 1 or 2 hits, or when they stand in for a specific fact.
 
 Rule: a lone Tier 3 word is not evidence. Clusters across tiers are.
+
+### Density budgets (ceilings, not targets)
+
+Structural tells are dosage problems: each instance can be defensible while the total is machine. Compile the budget before rewriting, count against it after. Dashes (P13): 0 everywhere, signature included. Contrast family (P9): 1 hard construction per 200 words, rounded up. Landed endings (P54): 1 per 4 body paragraphs, never 2 consecutive (ratio judged on 5+ body paragraphs; below that only the run rule applies). Tier 1 vocabulary: 0. Signature moves from a loaded profile: the profile's own FRÉQUENCE figure scaled to length, on its attested surface only; the profile is a ceiling, not a licence. These constants were calibrated on the incident corpus behind v2.2 (a failing 900-word commercial mail and three human controls); if the gate misfires on your texts, recalibrate against `evals/traps.json` rather than trusting a feeling. Ceilings, not targets: a text scrubbed of every landing and every contrast is its own kind of slop.
+
+### The local cluster scan (catches what totals miss)
+
+Global counts hide local pile-ups. After rewriting, slide a 4-sentence window inside each paragraph: 2+ distinct structural families (em dash, hard contrast, dramatic fragment, tier-1 word) or 3 hits total is a cluster, rewritten locally even when every element was individually kept as justified. Landed endings are budgeted separately by P54. Detection restraint ("flag clusters, not isolated tells") protects human quirks; this rewrite gate stops defensible devices from stacking into four sentences of machine cadence. Worked example: "Phase one: we test. Before any money moves. Not a full rollout, just ten users and a spreadsheet. The real launch happens later, while the data is already coming in." holds three tells in four sentences (dramatic fragment, "Not X, just Y", balanced closer). Fixed: "Phase one: we test, before any money moves. No rollout at this point, ten users and a spreadsheet. The real launch happens later, while the data is already coming in." The fragment folds in, the contrast becomes coordination, one closer survives because one is human.
 
 ### The Burstiness Principle
 
@@ -373,7 +396,7 @@ These make the difference between "clean" and "human":
 
 ### Mode: `detect`
 
-1. Scan input text for all 53 patterns.
+1. Scan input text for all 54 patterns.
 2. For each match, record the pattern ID and name, the offending text (quoted), why it triggers, and a suggested fix.
 3. Output a report:
 
@@ -401,7 +424,7 @@ These make the difference between "clean" and "human":
 1. Run detection (Step 2) internally; don't output the report.
 2. Apply fixes for every detected pattern.
 3. Apply voice injection (Step 3) based on `--voice`.
-4. Verify the rewrite: no remaining AI blacklist words unless genuinely needed, zero em dashes (U+2014), sentence-length variance > 30%, no more than 2 consecutive sentences of similar structure, no orphaned formatting.
+4. Verify the rewrite with the numbers gate (Step 5): count em and en dashes, hard contrast constructions against budget, landed endings and their longest run, cluster windows, tier-1 words, and profile surface violations. Show the counts. When an execution environment is available, run `scripts/gate.py` on the output; its numbers overrule yours.
 5. Output the rewritten text with a brief change summary:
 
 ```
@@ -433,6 +456,19 @@ Before presenting output, verify:
 6. **Sentence length audit.** If you see 3+ sentences of similar length in a row, vary them.
 7. **The "who wrote this?" test.** If someone read this, could they picture a specific person behind it? If it could have been written by anyone (or anything), it needs more voice.
 
+### The numbers gate (mandatory in rewrite and edit modes)
+
+Self-grading inflates; counting resists inflation. Before presenting a rewrite, produce these six numbers and print them in the change summary. A verification that produces no numbers did not happen.
+
+1. Em + en dashes outside quoted material: 0, subject lines and signature blocks included.
+2. Hard contrast constructions (P9 family): count vs. budget.
+3. Landed endings (P54): count over body paragraphs, longest run (max 1).
+4. Cluster windows: 0 after local rewrites.
+5. Tier-1 vocabulary hits: 0.
+6. Profile surface violations (moves outside attested surface or above FRÉQUENCE): 0.
+
+When you can execute code, run `scripts/gate.py output.txt` (`--fr` for French, `--contrast-budget N` for a profile figure): it computes checks 1-5 deterministically, exits non-zero on violations, and its counts overrule yours. Otherwise count by hand, sentence by sentence, and show the work. The fact-diff question from the hard constraint above is the seventh check and outranks the other six.
+
 ### Draft, self-audit, final (cheap quality pass, distinct from `--iterate`)
 
 After the first rewrite, ask one question of your own draft: "What still makes this read as AI?" Answer honestly in two or three bullets, then do one corrective pass targeting exactly those. This metacognitive step is cheaper than a full `--iterate` detect loop and catches the tells a checklist misses. It complements `--iterate`, it does not replace it.
@@ -461,7 +497,7 @@ A model grading its own output in the same session tends to inflate the result. 
 
 After producing the rewrite, re-run Step 2 (Detect) on the output. If patterns_hit > 0 AND iteration_count < N, recurse with the rewritten text as the new input. Stop when patterns_hit == 0 OR iteration_count == N. In the final change summary, note how many iterations ran (e.g., "Converged in 2 iterations").
 
-Worked before/after examples for technical docs, blog posts, and LinkedIn are in [`references/patterns.md`](references/patterns.md). The French catalog (FR1-FR14, tiered vocabulary, French-specific false positives) is in [`references/patterns.fr.md`](references/patterns.fr.md), with three fully worked French examples in [`references/examples.fr.md`](references/examples.fr.md).
+Worked before/after examples for technical docs, blog posts, and LinkedIn are in [`references/patterns.md`](references/patterns.md). The French catalog (FR1-FR14, tiered vocabulary, French-specific false positives) is in [`references/patterns.fr.md`](references/patterns.fr.md), with three fully worked French examples in [`references/examples.fr.md`](references/examples.fr.md). Regression traps distilled from real failures live in `evals/traps.json`; replay them after any edit to this skill.
 
 ---
 

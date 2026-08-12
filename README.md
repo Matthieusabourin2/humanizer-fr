@@ -2,7 +2,7 @@
 
 Skill Claude qui détecte les motifs d'écriture IA et réécrit le texte dans une voix humaine — la vôtre, si vous lui donnez votre corpus. Fork français documenté de [Aboudjem/humanizer-skill](https://github.com/Aboudjem/humanizer-skill).
 
-*French fork of the humanizer skill: 53 AI-writing patterns + 14 French-specific ones, a 0–100 AI-tell score, 5 built-in voices, and an `-empreinte` command that builds a custom voice profile from your own writing corpus, with real measurements.*
+*French fork of the humanizer skill: 54 AI-writing patterns + 14 French-specific ones, a 0–100 AI-tell score, 5 built-in voices, and an `-empreinte` command that builds a custom voice profile from your own writing corpus, with real measurements.*
 
 ## Ce que c'est
 
@@ -10,11 +10,12 @@ Un skill pour Claude (claude.ai, Claude Code, et tout éditeur qui lit des fichi
 
 Ce qu'il fait :
 
-- Détecte 53 motifs d'écriture IA (catalogue P1–P53) plus 14 motifs propres au français (FR1–FR14) : participes en chapelet, nominalisations vides, triades adjectivales décoratives, fausses gammes, clôtures génériques, tirets cadratins, uniformité rythmique…
+- Détecte 54 motifs d'écriture IA (catalogue P1–P54) plus 14 motifs propres au français (FR1–FR14) : participes en chapelet, nominalisations vides, triades adjectivales décoratives, fausses gammes, clôtures génériques, tirets cadratins, uniformité rythmique…
 - Attribue un score 0–100 de « tell IA » (plus bas = plus humain), avec la liste des motifs trouvés et où.
 - Réécrit dans une des 5 voix intégrées (`casual`, `professional`, `technical`, `warm`, `blunt`) ou dans une voix personnalisée.
 - Construit votre propre profil de voix depuis votre corpus réel avec `-empreinte` : règles mesurées, preuves citées, interdits, paliers d'intensité.
 - Connaît les faux positifs du français : le pronominal, le passif ordinaire ou « notamment » ne sont pas des tells, et le skill ne les signale pas.
+- Vérifie ses propres réécritures avec une porte chiffrée : budgets de densité (contrastes, punchlines de fin de paragraphe, cadratins), scan de cluster local, `scripts/gate.py` qui compte de façon déterministe, et pièges de régression dans `evals/traps.json`.
 
 ## Ce que ce n'est pas
 
@@ -97,7 +98,9 @@ Deux garde-fous structurants, hérités des régressions constatées en amont et
 humanizer/
   SKILL.md                        point d'entrée, 4 passes, garde-fous, préséance
   CHANGELOG.md                    manifeste de rebase : toutes les divergences vs l'amont
-  verify.py                       81 tests d'intégrité du paquet (python3 verify.py)
+  verify.py                       114 tests d'intégrité du paquet (python3 verify.py)
+  scripts/
+    gate.py                       porte chiffrée : cadratins, contrastes, kickers, clusters, tier 1
   references/
     patterns.md                   catalogue P1–P53 (anglais, hérité de l'amont)
     patterns.fr.md                catalogue FR1–FR14 + faux positifs français
@@ -107,9 +110,10 @@ humanizer/
     always-on-templates.md        gabarits de sortie
   evals/
     evals.fr.json                 cas de test à rejouer sur Haiku, Sonnet et Opus
+    traps.json                    pièges de régression distillés d'échecs réels
 ```
 
-Le CHANGELOG n'est pas décoratif : c'est un manifeste de rebase. Quand l'amont publie une version, on réapplique les divergences listées (D1–D10) et on relance `verify.py`.
+Le CHANGELOG n'est pas décoratif : c'est un manifeste de rebase. Quand l'amont publie une version, on réapplique les divergences listées (D1–D21) et on relance `verify.py`.
 
 ## Généalogie et crédits
 
