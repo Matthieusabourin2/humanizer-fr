@@ -35,8 +35,10 @@ import unicodedata
 WORD_RE = re.compile(r"[^\W\d_][\w'’-]*|\d+(?:[.,]\d+)?", re.UNICODE)
 
 # Abréviations françaises courantes qui ne terminent pas une phrase.
-ABBREV = {"m", "mm", "mme", "mlle", "dr", "me", "st", "ste", "etc", "ex", "cf",
-          "p", "pp", "art", "chap", "vol", "n°", "no", "env", "min", "max",
+# « etc. » n'y figure pas : il clôt très souvent la phrase en français, et le
+# découpage n'opère de toute façon que devant une majuscule.
+ABBREV = {"m", "mm", "mme", "mlle", "dr", "me", "st", "ste", "ex", "cf",
+          "p", "pp", "art", "chap", "vol", "no", "env", "min", "max",
           "tel", "tél", "av", "bd", "resp", "vs"}
 
 SENT_END = re.compile(r"(?<=[.!?…])\s+(?=[\"«“(\[]?[A-ZÀ-ÖØ-Þ0-9])")
@@ -266,7 +268,7 @@ PATTERNS = {
          r"\b(?:j'espère que cela (?:vous )?aide|j'espère que ce (?:message|mail|courriel) vous trouve|bien sûr !|voici un(?:e)? (?:aperçu|analyse|synthèse)|n'hésitez pas si vous avez)\b",
          5, "each"),
         ("P33", "Placeholders non remplis",
-         r"\[(?:votre|insérez|insérer|nom|date)[^\]]*\]|lorem ipsum|20\d\d-XX",
+         r"\[(?:votre|insérez|insérer|noms?|dates?)\b[^\]]*\]|lorem ipsum|20\d\d-XX",
          6, "each"),
         ("P34", "Balisage de chatbot",
          r"citeturn\d|oai_citation|contentReference\[oaicite|\[attached_file:\d",
@@ -347,16 +349,20 @@ def detect_lang(tokens):
 
 
 def lexical_tells(text_lower, tokens, lang):
+    """Compte les entrées du lexique. Multi-mots : frontières de mots obligatoires
+    (« de plus » ne doit pas matcher « de plusieurs »)."""
     lex = LEXIQUES[lang]
     n1 = n2 = 0
     hits1, hits2 = [], []
     for entry in lex["niveau1"]:
-        c = text_lower.count(entry) if " " in entry else sum(1 for t in tokens if t == entry)
+        c = (len(re.findall(r"\b" + re.escape(entry) + r"\b", text_lower))
+             if " " in entry else sum(1 for t in tokens if t == entry))
         if c:
             n1 += c
             hits1.append(f"{entry} ×{c}" if c > 1 else entry)
     for entry in lex["niveau2"]:
-        c = text_lower.count(entry) if " " in entry else sum(1 for t in tokens if t == entry)
+        c = (len(re.findall(r"\b" + re.escape(entry) + r"\b", text_lower))
+             if " " in entry else sum(1 for t in tokens if t == entry))
         if c:
             n2 += c
             hits2.append(f"{entry} ×{c}" if c > 1 else entry)
@@ -423,14 +429,23 @@ def max_run(bools):
 
 
 def uniform_runs(lengths, span=5, min_run=3):
-    """Runs de >= min_run phrases consécutives à ±span mots les unes des autres."""
+    """Runs de >= min_run phrases consécutives à ±span mots les unes des autres.
+    Min/max maintenus au fil de l'eau : pas de re-slice quadratique."""
     runs, start = [], 0
+    lo = hi = lengths[0] if lengths else 0
     for i in range(1, len(lengths) + 1):
-        if i == len(lengths) or abs(lengths[i] - lengths[start]) > span \
-                or max(lengths[start:i + 1] or [0]) - min(lengths[start:i + 1] or [0]) > span:
+        cut = i == len(lengths)
+        if not cut:
+            nlo, nhi = min(lo, lengths[i]), max(hi, lengths[i])
+            cut = abs(lengths[i] - lengths[start]) > span or nhi - nlo > span
+            if not cut:
+                lo, hi = nlo, nhi
+        if cut:
             if i - start >= min_run:
                 runs.append((start, i - 1))
             start = i
+            if i < len(lengths):
+                lo = hi = lengths[i]
     return runs
 
 
@@ -463,7 +478,11 @@ def analyze(text, lang="auto", ignore_code=False, ignore_quotes=False):
         "short_sample": len(tokens) < 40,
     }
 
-    lex = lexical_tells(cleaned.lower(), tokens, lang)
+    # Les citations sont masquées pour le lexique comme pour les patterns
+    # (un texte humain qui CITE du slop ne doit pas en porter le score) ;
+    # les métriques (burstiness, MATTR...) restent sur le texte complet.
+    masked_for_tells = mask_quoted_spans(cleaned)
+    lex = lexical_tells(masked_for_tells.lower(), word_tokens(masked_for_tells), lang)
     patterns = detect_patterns(cleaned, lang)
 
     # densité lexicale élargie : lexique pondéré + hits de patterns pondérés/6

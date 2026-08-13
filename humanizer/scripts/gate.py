@@ -193,16 +193,22 @@ def analyze(text, fr=False, contrast_budget=None, kicker_ratio_max=0.25, profile
         contrast_budget = int(profile["contrast_budget"])
     if profile.get("kicker_ratio_max") is not None:
         kicker_ratio_max = float(profile["kicker_ratio_max"])
-    low_all = unicodedata.normalize("NFC", text).replace("’", "'").lower()
+    # Comme les checks 1-5 : les citations sont masquées (un interdit CITÉ n'est
+    # pas une violation), et le comptage respecte les frontières de mots.
+    low_all = masked.replace("’", "'").lower()
+
+    def count_bounded(needle):
+        needle = str(needle).replace("’", "'").lower()
+        return len(re.findall(r"\b" + re.escape(needle) + r"\b", low_all)) if needle else 0
+
     for interdit in profile.get("interdits", []):
-        c = low_all.count(str(interdit).replace("’", "'").lower())
+        c = count_bounded(interdit)
         if c:
             prof_viol.append(f"interdit présent: « {interdit} » ×{c}")
     signatures = []
     for sig in profile.get("signatures", []):
-        motif = str(sig.get("motif", "")).replace("’", "'").lower()
         cap = int(sig.get("max", 1))
-        c = low_all.count(motif) if motif else 0
+        c = count_bounded(sig.get("motif", ""))
         signatures.append({"motif": sig.get("motif"), "count": c, "max": cap})
         if c > cap:
             prof_viol.append(f"signature au-delà du plafond FRÉQUENCE: « {sig.get('motif')} » ×{c} > {cap}")

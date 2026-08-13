@@ -94,7 +94,8 @@ check("FR1 à FR14 présents", len(ids) == 14, f"{len(ids)} trouvés")
 check("3 niveaux de confiance", fr.count("**Niveau") == 3)
 check("faux positifs FR documentés", "Faux positifs propres au français" in fr)
 check("règles EN intransposables neutralisées",
-      all(p in skill for p in ["P17", "P26", "P8"]))
+      "P16 (Title Case)" in skill and "P47 (hyphenated pairs)" in skill
+      and "P8 (copula avoidance)" in skill)
 check("routage FR déclaré", "patterns.fr.md" in skill)
 
 print("\n[6] Préséance sur un skill de voix")
