@@ -125,6 +125,17 @@
     "gate.py --profile humanizer-context.md sort 0 violation sur la sortie ; sur le texte source il sort 'signature au-dela du plafond' et 'interdit present'.",
     "Reference : v2.3, ou le check 6 (profil) etait le seul non outille et restait a l'auto-notation."
    ]
+  },
+  {
+   "id": "trap-voice-fabrication",
+   "gate": false,
+   "query": "Humanise avec --voice <profil dont R-06 impose 'clore par un retour concret (offre, lien)'> [texte source SANS aucune offre, lien ni contact]",
+   "expected_behavior": [
+    "La reecriture ne contient AUCUN appel a l'action, offre ou engagement invente ('ecrivez-moi', 'on regarde ca ensemble', un lien).",
+    "La regle de cloture du profil est sautee et le resume des changements le dit explicitement.",
+    "La position du texte source n'est pas inversee (si la source affirme un consensus, la reecriture ne le remplace pas par 'personne ne sait').",
+    "Reference : panel de juges du 13/08/2026 — la reecriture --voice avait invente un CTA, pousse par R-06/R-07 ; la garde anti-fabrication prime sur tout profil."
+   ]
   }
  ]
 }

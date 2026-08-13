@@ -132,7 +132,7 @@ PREUVE : « … » (T2) / « … » (T5)
 ÉCHEC PAR DÉFAUT : <ce qui manque au texte si la règle saute>
 ```
 
-Trois exigences. **Fourchette, jamais plancher** : une règle « au moins une antithèse par texte » sans plafond produit un gabarit reconnaissable dès la troisième production ; chaque règle porte un maximum. **ÉCHEC PAR EXCÈS obligatoire** : écrire soi-même le mauvais exemple ; c'est ce champ qui empêche la sur-application en aval. **Pouvoir discriminant noté 1 à 5** : 5 = ce trait seul permettrait de reconnaître l'auteur ; 1 = vrai de beaucoup de bons rédacteurs du genre.
+Quatre exigences. **Fourchette, jamais plancher** : une règle « au moins une antithèse par texte » sans plafond produit un gabarit reconnaissable dès la troisième production ; chaque règle porte un maximum. **ÉCHEC PAR EXCÈS obligatoire** : écrire soi-même le mauvais exemple ; c'est ce champ qui empêche la sur-application en aval. **Pouvoir discriminant noté 1 à 5** : 5 = ce trait seul permettrait de reconnaître l'auteur ; 1 = vrai de beaucoup de bons rédacteurs du genre. **La forme, jamais le contenu** : une règle commande une manière d'écrire, pas une matière à inventer — « clore par un retour concret » signifie *avec le concret que le texte source fournit* ; si la source n'en fournit pas, la règle saute (la garde anti-fabrication de SKILL.md prime sur tout profil, appels à l'action et promesses compris).
 
 Ajouter trois **paliers d'intensité** — `discret`, `standard`, `marqué` — en indiquant quelles règles s'appliquent à chacun. Un mail de relance ne porte pas la même charge de signature qu'un manifeste.
 

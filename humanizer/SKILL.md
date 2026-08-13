@@ -77,7 +77,7 @@ Over-triggering is a defect: a skill that fires on everything gets ignored, and 
 
 ## Hard constraint: no invented facts
 
-The rewrite must not contain any fact, name, number, date, quote, price, metric, or citation that is not in the source text or supplied by the user. This outranks every craft technique here. The Concretizer (Step 3) may only replace an abstraction with a specific that already exists in the source. Sensory detail may add stance, reaction, and rhythm, never a scene that did not happen. Opinions and uncertainty are voice and may be added; facts may not. In Step 5, answer explicitly: **"does the rewrite state any fact absent from the source?"** A fabrication is a defect even when it sounds more human than the vague original.
+The rewrite must not contain any fact, name, number, date, quote, price, metric, or citation that is not in the source text or supplied by the user. **Commitments count as facts**: an invented call to action, offer, or promise to the reader ("write to me, we'll look at it together") is a fabrication of the gravest kind. **Reversal counts too**: sharpening the source's stance is voice; contradicting it is not — if the source claims expert consensus, the rewrite may name or cut the attribution, never replace the claim with its opposite. This outranks every craft technique here, voice profiles included. The Concretizer (Step 3) may only replace an abstraction with a specific that already exists in the source. Sensory detail may add stance, reaction, and rhythm, never a scene that did not happen. Opinions and uncertainty are voice and may be added; facts may not. In Step 5, answer explicitly: **"does the rewrite state any fact absent from the source?"** A fabrication is a defect even when it sounds more human than the vague original.
 
 ## Language routing and skill precedence
 
@@ -196,7 +196,7 @@ Pull only what the piece needs; on neutral reference or legal text, most of this
 
 **Anti-Default Discipline.** Name the reflexive moves and refuse them: the automatic rule-of-three, the tidy summary closing every paragraph, the balanced both-sides hedge, the "In conclusion" wrap. Injecting personality into text that wants to stay plain is its own slop.
 
-**Position engine.** For any opinion piece, force one defensible strong stance and a named target. An opinion no one could argue against is not an opinion. On neutral or reference text, skip: there the stance is the facts.
+**Position engine.** For any opinion piece, force one defensible strong stance and a named target. An opinion no one could argue against is not an opinion. The stance is the **source's** stance, sharpened — never its reversal (see the hard constraint). On neutral or reference text, skip: there the stance is the facts.
 
 **Concretizer pass.** Turn abstractions into images or concrete actions **already present in the source**. "The process is complex" becomes the actual steps. A sentence that could describe anything describes nothing.
 
@@ -211,6 +211,7 @@ When a `## Voice: <name>` profile is loaded from `humanizer-context.md` (built b
 3. **`### Interdits` are absolute**: constructions the corpus never uses must not appear, however natural they feel.
 4. **`### Ce que humanizer ne touche pas` overrides the catalog**: traits listed there (attested in ≥70% of the corpus) are signatures, not tells — P1-P54 and FR1-FR14 included, P54 included. Do not scrub them; do not amplify them beyond their FRÉQUENCE either.
 5. **Surface scope is hard**: a device attested in posts only does not migrate into a mail.
+6. **The hard constraint outranks the profile.** A rule that calls for a concrete close, a CTA, a figure or an anecdote draws only on material present in the source; when the source provides none, the rule is skipped and the change summary says so. A profile governs form, never content.
 
 The profile outranks the five built-in voices and the style rules of this file, em-dash ban included. After rewriting, the profile's measurable constraints are verified by `gate.py --profile` (Step 5); a profile violation is a defect equal to a leftover tell.
 
