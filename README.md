@@ -4,6 +4,8 @@ Skill Claude qui détecte les motifs d'écriture IA et réécrit le texte dans u
 
 *French fork of the humanizer skill: 54 AI-writing patterns + 14 French-specific ones, a 0–100 AI-tell score, 5 built-in voices, and an `-empreinte` command that builds a custom voice profile from your own writing corpus, with real measurements.*
 
+**🧪 Démo en ligne : [catalia.fr/ressources/humanizer](https://www.catalia.fr/ressources/humanizer)** — collez un texte français, obtenez le score et le détail des motifs, 100 % dans votre navigateur (même moteur que `scripts/scan.py`, zéro envoi).
+
 ## Ce que c'est
 
 Un skill pour Claude (claude.ai, Claude Code, et tout éditeur qui lit des fichiers SKILL.md). Pas de serveur, pas de dépendance, pas d'appel réseau : des fichiers Markdown que le modèle lit, plus un `verify.py` optionnel pour tester le paquet.
