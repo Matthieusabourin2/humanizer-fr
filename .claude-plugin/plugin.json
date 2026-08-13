@@ -1,0 +1,9 @@
+{
+  "name": "humanizer-fr",
+  "version": "3.0.0",
+  "description": "Détecte 54 patterns d'écriture IA (plus 14 propres au français) et réécrit dans une voix humaine — la vôtre, via -empreinte. Score 0-100 déterministe par scripts/scan.py. Déclencheurs : « rends ce texte plus humain », « on dirait du ChatGPT », « humanise ce texte », « ça sonne généré », « make this sound human ». Commandes : -score, -fr, -voix, -empreinte, -audit, -help.",
+  "author": {"name": "Matthieu Sabourin", "url": "https://github.com/Matthieusabourin2"},
+  "homepage": "https://github.com/Matthieusabourin2/humanizer-fr",
+  "license": "MIT",
+  "skills": "./"
+}

@@ -1,17 +1,28 @@
 #!/usr/bin/env python3
-"""Porte chiffrée du humanizer v2.2 : compte ce que le modèle doit montrer.
+"""Porte chiffrée du humanizer v3 : compte ce que le modèle doit montrer.
 
-Checks déterministes 1-5 du numbers gate de SKILL.md :
-  1. tirets cadratins + demi-cadratins hors citations (doit être 0)
-  2. constructions de contraste dures (famille P9) vs budget
+Checks déterministes 1-6 du numbers gate de SKILL.md :
+  1. tirets cadratins + demi-cadratins hors citations (doit être 0,
+     sauf plafond attesté par un profil)
+  2. constructions de contraste dures (famille P9/FR4) vs budget
   3. atterrissages de paragraphe (P54) : ratio et plus longue série
   4. fenêtres-cluster de 4 phrases, 2+ familles structurelles distinctes
   5. vocabulaire Tier 1 / FR niveau 1 (doit être 0)
+  6. contrat de profil (--profile) : Interdits absents, plafonds FRÉQUENCE
+     des signatures respectés, budgets du bloc `gate` appliqués
 
 Usage : python3 gate.py texte.txt [--fr] [--contrast-budget N] [--json]
+                                  [--profile humanizer-context.md] [--voice NOM]
         cat texte.txt | python3 gate.py -
 Sortie 0 = conforme, 1 = violations. Heuristique assumée : ce script est
 un garde-fou contre l'auto-notation, pas un juge littéraire.
+
+Le check 6 lit, dans le bloc `## Voice: <nom>` du fichier de profil, un bloc
+fencé ```json gate``` émis par `-empreinte` (références/empreinte.md) :
+  {"dashes_max": 0, "contrast_budget": 2, "kicker_ratio_max": 0.4,
+   "interdits": ["en conclusion"], "signatures": [{"motif": "…", "max": 1}]}
+Les champs absents gardent les défauts du gate. `max` d'une signature =
+occurrences maximales dans le texte évalué (plafond FRÉQUENCE, pas cible).
 """
 import argparse, json, math, re, sys, unicodedata
 
@@ -87,7 +98,33 @@ def is_fragment(sent):
     return len(w) <= 4 and not (set(w) & verbish)
 
 
-def analyze(text, fr=False, contrast_budget=None, kicker_ratio_max=0.25):
+def load_profile_gate(path, voice=None):
+    """Extrait le bloc ```json gate``` d'un profil ## Voice: dans humanizer-context.md.
+
+    voice=None : premier profil trouvé. Retourne {} si fichier ou bloc absents
+    (le gate tourne alors avec ses défauts, et le signale)."""
+    try:
+        doc = open(path, encoding="utf-8").read()
+    except OSError:
+        return {"_error": f"profil introuvable: {path}"}
+    blocks = re.split(r"(?m)^## Voice:\s*", doc)[1:]
+    for b in blocks:
+        name = b.split("\n", 1)[0].strip()
+        if voice and name.lower() != voice.lower():
+            continue
+        m = re.search(r"```json gate\n(.*?)```", b, re.S)
+        if not m:
+            return {"_error": f"profil '{name}' sans bloc ```json gate``` (empreinte v3 requis)"}
+        try:
+            cfg = json.loads(m.group(1))
+        except ValueError as e:
+            return {"_error": f"bloc gate du profil '{name}' illisible: {e}"}
+        cfg["_voice"] = name
+        return cfg
+    return {"_error": f"aucun profil{' ' + voice if voice else ''} dans {path}"}
+
+
+def analyze(text, fr=False, contrast_budget=None, kicker_ratio_max=0.25, profile=None):
     text = unicodedata.normalize("NFC", text)
     masked = mask_quotes(text)
     nwords = len(words(masked))
@@ -145,13 +182,39 @@ def analyze(text, fr=False, contrast_budget=None, kicker_ratio_max=0.25):
 
     # dédoublonner les contrastes comptés deux fois sur la même phrase
     contrast = list(dict.fromkeys(contrast))
+
+    # check 6 : le contrat du profil ajuste les plafonds et ajoute ses contraintes
+    profile = profile or {}
+    prof_viol = []
+    if profile.get("_error"):
+        prof_viol.append(f"profile: {profile['_error']}")
+    dashes_max = int(profile.get("dashes_max", 0))
+    if profile.get("contrast_budget") is not None and contrast_budget is None:
+        contrast_budget = int(profile["contrast_budget"])
+    if profile.get("kicker_ratio_max") is not None:
+        kicker_ratio_max = float(profile["kicker_ratio_max"])
+    low_all = unicodedata.normalize("NFC", text).replace("’", "'").lower()
+    for interdit in profile.get("interdits", []):
+        c = low_all.count(str(interdit).replace("’", "'").lower())
+        if c:
+            prof_viol.append(f"interdit présent: « {interdit} » ×{c}")
+    signatures = []
+    for sig in profile.get("signatures", []):
+        motif = str(sig.get("motif", "")).replace("’", "'").lower()
+        cap = int(sig.get("max", 1))
+        c = low_all.count(motif) if motif else 0
+        signatures.append({"motif": sig.get("motif"), "count": c, "max": cap})
+        if c > cap:
+            prof_viol.append(f"signature au-delà du plafond FRÉQUENCE: « {sig.get('motif')} » ×{c} > {cap}")
+
     budget = contrast_budget if contrast_budget is not None else max(1, math.ceil(nwords / 200))
     kr = len(kickers) / body_pars if body_pars else 0
     longest_run = max(runs) if runs else 0
 
     viol = []
-    if dashes:
-        viol.append(f"dashes={dashes} (must be 0, signature included)")
+    if dashes > dashes_max:
+        cap_txt = "0, signature included" if not dashes_max else f"plafond profil {dashes_max}"
+        viol.append(f"dashes={dashes} (must be {cap_txt})")
     if len(contrast) > budget:
         viol.append(f"contrast={len(contrast)} > budget={budget}")
     if kr > kicker_ratio_max and body_pars >= 5:
@@ -162,6 +225,7 @@ def analyze(text, fr=False, contrast_budget=None, kicker_ratio_max=0.25):
         viol.append(f"clusters={len(clusters)}")
     if tier1_hits:
         viol.append(f"tier1={tier1_hits}")
+    viol.extend(prof_viol)
 
     return {"words": nwords, "body_paragraphs": body_pars, "dashes": dashes,
             "contrast_hard": len(contrast), "contrast_budget": budget,
@@ -169,7 +233,9 @@ def analyze(text, fr=False, contrast_budget=None, kicker_ratio_max=0.25):
             "kickers": len(kickers), "kicker_ratio": round(kr, 2),
             "kicker_longest_run": longest_run, "kicker_samples": kickers[:6],
             "clusters": len(clusters), "cluster_samples": clusters[:4],
-            "tier1": tier1_hits, "violations": viol, "pass": not viol}
+            "tier1": tier1_hits,
+            "profile_voice": profile.get("_voice"), "profile_signatures": signatures,
+            "violations": viol, "pass": not viol}
 
 
 def main():
@@ -178,10 +244,15 @@ def main():
     ap.add_argument("--fr", action="store_true")
     ap.add_argument("--contrast-budget", type=int, default=None)
     ap.add_argument("--kicker-ratio", type=float, default=0.25)
+    ap.add_argument("--profile", default=None,
+                    help="humanizer-context.md contenant le profil (check 6)")
+    ap.add_argument("--voice", default=None, help="nom du profil à charger")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
     text = sys.stdin.read() if a.file == "-" else open(a.file, encoding="utf-8").read()
-    r = analyze(text, fr=a.fr, contrast_budget=a.contrast_budget, kicker_ratio_max=a.kicker_ratio)
+    prof = load_profile_gate(a.profile, a.voice) if a.profile else None
+    r = analyze(text, fr=a.fr, contrast_budget=a.contrast_budget,
+                kicker_ratio_max=a.kicker_ratio, profile=prof)
     if a.json:
         print(json.dumps(r, ensure_ascii=False, indent=1))
     elif "error" in r:
