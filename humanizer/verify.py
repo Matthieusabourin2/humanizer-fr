@@ -7,6 +7,7 @@ il vérifie que ce qui est promis dans SKILL.md existe et se comporte comme anno
     python3 verify.py [chemin/vers/humanizer]
 """
 import json
+import os
 import re
 import subprocess
 import sys
@@ -32,17 +33,32 @@ skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
 
 print("\n[1] Frontmatter")
 fm = skill.split("---")[1]
+meta = {}
 try:
     import yaml
     meta = yaml.safe_load(fm)
     check("YAML parsable", True)
-    check("champ name = humanizer", meta.get("name") == "humanizer")
-    check("description < 1024 car.", len(meta.get("description", "")) < 1024,
-          f"{len(meta.get('description',''))} car.")
-    check("allowed-tools sans Bash ni WebFetch",
-          not ({"Bash", "WebFetch"} & set(meta.get("allowed-tools", []))))
+except ImportError:
+    # fallback sans PyYAML : extraction minimale, meta reste defini pour la suite
+    m = re.search(r"^name:\s*(\S+)", fm, re.M)
+    d = re.search(r"^description:\s*\|?\n((?:  .*\n)+)", fm, re.M)
+    v = re.search(r'^\s*version:\s*"([^"]+)"', fm, re.M)
+    u = re.search(r'^\s*upstream:\s*"([^"]+)"', fm, re.M)
+    meta = {"name": m.group(1) if m else "",
+            "description": d.group(1) if d else "",
+            "allowed-tools": re.findall(r"^  - (\w+)", fm, re.M),
+            "metadata": {"version": v.group(1) if v else "",
+                          "upstream": u.group(1) if u else ""}}
+    check("frontmatter lisible (fallback sans yaml)", bool(meta["name"]))
 except Exception as e:
     check("YAML parsable", False, str(e))
+check("champ name = humanizer", meta.get("name") == "humanizer")
+check("description < 1024 car.", len(meta.get("description", "")) < 1024,
+      f"{len(meta.get('description',''))} car.")
+# Bash est requis depuis v3 (execution de scripts/scan.py et gate.py) ;
+# le reseau reste banni.
+check("allowed-tools sans WebFetch",
+      "WebFetch" not in set(meta.get("allowed-tools", [])))
 
 print("\n[2] Intégrité des références (le défaut classique : référencer un fichier absent)")
 refs = sorted(set(re.findall(r"references/[a-z.\-]+\.md", skill)))
@@ -67,7 +83,7 @@ check("convention tiret simple / double documentée",
 
 print("\n[4] Garde anti-fabrication (régression de l'amont)")
 check("contrainte dure présente", "no invented facts" in skill.lower())
-check("Concretizer bridé", "Concretizer pass (Step 3) may only replace" in skill)
+check("Concretizer bridé", "Concretizer" in skill and "may only replace" in skill)
 check("Soul Injection bridé", "never a scene that did not happen" in skill)
 check("2e question d'audit restaurée", "absent from the source" in skill)
 
@@ -78,7 +94,8 @@ check("FR1 à FR14 présents", len(ids) == 14, f"{len(ids)} trouvés")
 check("3 niveaux de confiance", fr.count("**Niveau") == 3)
 check("faux positifs FR documentés", "Faux positifs propres au français" in fr)
 check("règles EN intransposables neutralisées",
-      all(p in skill for p in ["P17", "P26", "P8"]))
+      "P16 (Title Case)" in skill and "P47 (hyphenated pairs)" in skill
+      and "P8 (copula avoidance)" in skill)
 check("routage FR déclaré", "patterns.fr.md" in skill)
 
 print("\n[6] Préséance sur un skill de voix")
@@ -111,7 +128,7 @@ if ex.exists():
     check("3 exemples complets", e.count("**Avant**") == 3 and e.count("**Après**") == 3)
     check("3 surfaces couvertes",
           all(x in e for x in ["Post LinkedIn", "Mail commercial", "proposition"]))
-    check("chaque exemple porte un score avant/après", e.count("Score CLI") >= 6)
+    check("chaque exemple porte un score avant/après", e.count("Score scan.py") >= 6)
     check("colonne 'conservé délibérément' présente",
           e.count("Conservé délibérément") == 3)
     check("avertissement anti-fabrication dans les exemples",
@@ -172,7 +189,9 @@ if chg.exists():
     check("procedure de rebase enoncee", "rebase" in ch.lower())
     check("retraits amont documentes", "Retiré de l'amont" in ch)
     # chaque fichier ajoute par rapport a l'amont doit etre cite dans le manifeste
-    up = Path("/home/claude/repo/humanizer-skill-main/skills/humanizer")
+    # (comparaison sautee si l'amont n'est pas clone ; chemin via HUMANIZER_UPSTREAM)
+    up = Path(os.environ.get("HUMANIZER_UPSTREAM",
+                             str(ROOT.parent / "upstream/skills/humanizer")))
     if up.exists():
         ours = {q.relative_to(ROOT).as_posix() for q in ROOT.rglob("*")
                 if q.is_file() and q.suffix in (".md", ".json")}
@@ -183,26 +202,19 @@ if chg.exists():
         for f in sorted(theirs - ours):
             check(f"retrait documente: {f}", Path(f).name in ch)
 
-print("\n[13] Vérificateur déterministe (CLI)")
-if CLI.exists():
-    def score(txt):
-        r = subprocess.run(["node", str(CLI), "score", "-", "--json"],
-                           input=txt, capture_output=True, text=True)
-        if r.returncode not in (0, 1):
-            return None
-        try:
-            return json.loads(r.stdout)
-        except Exception:
-            m = re.search(r"Score: (\d+)/100", r.stdout)
-            return {"score": int(m.group(1))} if m else None
+print("\n[13] Vérificateur déterministe (scripts/scan.py)")
+sc = ROOT / "scripts" / "scan.py"
+check("scripts/scan.py existe", sc.exists())
+if sc.exists():
+    import importlib.util
+    spec13 = importlib.util.spec_from_file_location("scanmod", sc)
+    scanmod = importlib.util.module_from_spec(spec13); spec13.loader.exec_module(scanmod)
 
-    tok = subprocess.run(
-        ["node", "-e",
-         "const{wordTokens}=require('./lib/tokenize');"
-         "console.log(JSON.stringify(wordTokens('réévaluer une stratégie éprouvée')))"],
-        cwd=CLI.parent, capture_output=True, text=True)
     check("tokenizer unicode (accents non fragmentés)",
-          '"réévaluer"' in tok.stdout, tok.stdout.strip())
+          "réévaluer" in scanmod.word_tokens("réévaluer une stratégie éprouvée"))
+    check("SKILL.md route le scanner", "scripts/scan.py" in skill)
+    check("le scan precede la reecriture dans SKILL.md",
+          skill.find("scripts/scan.py") < skill.find("## Step 3"))
 
     slop = ("Dans un monde ou tout evolue rapidement, notre plateforme incontournable permet de "
             "revolutionner vos usages quotidiens, offrant une experience utilisateur fluide et "
@@ -213,14 +225,17 @@ if CLI.exists():
               "et il l'a pose sur la table sans rien dire. On a repris depuis le debut. Trois heures. "
               "A la fin il m'a demande si je pensais vraiment que ca marcherait, et je n'ai pas su quoi "
               "repondre. Le lendemain il avait refait la moitie du deck tout seul, a sa facon.")
-    s1, s2 = score(slop), score(humain)
-    check("score FR sur prose truffée > 40", s1 and s1["score"] > 40, str(s1))
-    check("score FR sur prose humaine < 20", s2 and s2["score"] < 20, str(s2))
-    check("le juge sépare les deux échantillons",
-          s1 and s2 and s1["score"] - s2["score"] > 30,
-          f"écart {s1['score']-s2['score'] if s1 and s2 else '?'}")
-else:
-    print("  (CLI absent, section ignorée)")
+    s1 = scanmod.analyze(slop, "fr")
+    s2 = scanmod.analyze(humain, "fr")
+    check("score FR sur prose truffée > 40", s1["score"] > 40, str(s1["score"]))
+    check("score FR sur prose humaine < 20", s2["score"] < 20, str(s2["score"]))
+    check("le juge sépare les deux échantillons", s1["score"] - s2["score"] > 30,
+          f"écart {s1['score'] - s2['score']}")
+    check("patterns mecaniques detectes sur la prose truffée",
+          {"FR1", "FR5", "FR7"} <= {p["id"] for p in s1["patterns"]},
+          str([p["id"] for p in s1["patterns"]]))
+    check("determinisme (deux passes, memes chiffres)",
+          scanmod.analyze(slop, "fr")["score"] == s1["score"])
 
 
 print("\n[14] Porte chiffree v2.2 (budgets, clusters, gate.py, pieges)")

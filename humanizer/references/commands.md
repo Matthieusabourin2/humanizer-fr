@@ -56,13 +56,23 @@ PREUVE: « … » (T2) / « … » (T5)
 
 [R-02] ...
 
+### Paliers
+discret: [R-01] · standard: [R-01] [R-03] · marqué: toutes
+
 ### Interdits
 <constructions absentes du corpus, à ne jamais introduire>
 
 ### Ce que humanizer ne touche pas
-<les traits signature que le catalogue P1-P53 / FR1-FR14 confondrait avec des tells>
+<les traits signature que le catalogue P1-P54 / FR1-FR14 confondrait avec des tells>
+
+```json gate
+{"surface": "...", "dashes_max": 0, "contrast_budget": 2, "kicker_ratio_max": 0.4,
+ "interdits": ["..."], "signatures": [{"motif": "...", "max": 1}]}
+```
 ```
 
-Once a profile exists, `--voice <name>` selects it and it **overrides** the built-in voices and the style rules of SKILL.md, including the em dash ban, exactly as the Voice Calibration section prescribes. A profile built from the author's real corpus outranks a generic rule about how humans write.
+Once a profile exists, `--voice <name>` selects it and it **overrides** the built-in voices and the style rules of SKILL.md, including the em dash ban, exactly as the **Voice Calibration** section of SKILL.md (Step 3) prescribes: re-read the profile at rewrite time, apply each [R-nn] as a bounded min-max constraint, treat `### Interdits` as absolute, and never move a device outside its attested surface. A profile built from the author's real corpus outranks a generic rule about how humans write.
 
 The `### Ce que humanizer ne touche pas` block is not decorative. It is the same guard as the precedence note in SKILL.md, written from evidence instead of from a brand doctrine: a trait attested across most of the corpus is a signature, not a tell, and scrubbing it is the failure mode.
+
+The ```` ```json gate ```` block is the machine-checkable half of the contract: `scripts/gate.py output.txt --fr --profile humanizer-context.md` reads it and enforces its budgets, interdits and signature ceilings deterministically (check 6 of the numbers gate). `-empreinte` (see `references/empreinte.md`, Passe 6) emits it from measured figures, never from generic defaults.

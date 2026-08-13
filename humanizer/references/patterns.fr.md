@@ -1,6 +1,6 @@
 # Tells de l'IA en français (FR1 à FR14)
 
-Le catalogue P1-P53 du SKILL.md est calibré sur l'anglais. Ses listes de mots (`delve`, `tapestry`, `boasts`, `nestled`) ne déclenchent rien sur du texte français, et trois de ses règles ne s'y transposent pas du tout : P17 Title Case (la capitalisation française est déjà minuscule), P26 paires à trait d'union (règle typographique anglaise), P8 évitement de la copule (le français emploie `constituer`, `représenter`, `s'imposer comme` avec une légitimité différente de `serves as`).
+Le catalogue P1-P54 du SKILL.md est calibré sur l'anglais. Ses listes de mots (`delve`, `tapestry`, `boasts`, `nestled`) ne déclenchent rien sur du texte français, et trois de ses règles ne s'y transposent pas du tout : P16 Title Case (la capitalisation française est déjà minuscule), P47 paires à trait d'union (règle typographique anglaise), P8 évitement de la copule (le français emploie `constituer`, `représenter`, `s'imposer comme` avec une légitimité différente de `serves as`).
 
 Ce fichier remplace ces listes pour tout texte français. Les principes du SKILL.md restent valables : grappes plutôt qu'occurrences isolées, retenue plutôt que zèle, jamais de réécriture dans une citation ou du code.
 
@@ -10,7 +10,7 @@ Ce fichier remplace ces listes pour tout texte français. Les principes du SKILL
 
 **Niveau 1, toujours signaler.** Ces formes ne survivent presque jamais dans de la prose française non assistée : *véritable* (adjectif antéposé emphatique), *incontournable*, *plonger dans / plongeons*, *au cœur de*, *à l'ère de*, *dans un monde où*, *force est de constater*, *il convient de noter*, *il est important de souligner que*, *s'impose comme*, *témoigne de*, *ne se limite pas à*, *va bien au-delà de*, *révolutionner*, *un enjeu majeur*, *un levier puissant*.
 
-**Niveau 2, signaler en densité (2 occurrences ou plus dans un paragraphe).** *crucial, essentiel, clé (adjectif), pertinent, robuste, innovant, dynamique, riche (figuré), optimiser, favoriser, permettre de, s'inscrire dans, refléter, notamment, ainsi, en effet, par ailleurs, de plus, en outre, toutefois, néanmoins, dès lors, en somme.* Une seule occurrence n'est rien : la prose française écrite emploie légitimement *notamment*, *ainsi* et *en effet* bien plus souvent que l'anglais n'emploie *moreover*. C'est l'empilement qui trahit.
+**Niveau 2, signaler en densité (2 occurrences ou plus dans un paragraphe).** *crucial, essentiel, clé (adjectif), pertinent, robuste, innovant, dynamique, riche (figuré), optimiser, maximiser, mesurable, favoriser, permettre de, s'inscrire dans, refléter, notamment, ainsi, en effet, par ailleurs, de plus, en outre, toutefois, néanmoins, dès lors, en somme.* Une seule occurrence n'est rien : la prose française écrite emploie légitimement *notamment*, *ainsi* et *en effet* bien plus souvent que l'anglais n'emploie *moreover*. C'est l'empilement qui trahit.
 
 **Niveau 3, contexte seulement.** *important, significatif, divers, efficace, utile, puissant.* Jamais signalés seuls.
 

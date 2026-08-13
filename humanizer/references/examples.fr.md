@@ -20,7 +20,7 @@ Les entreprises citées sont fictives. Aucun chiffre de ces exemples ne doit êt
 >
 > Et vous, où en êtes-vous dans votre transformation ?
 
-**Patterns déclenchés** — FR1 participes en chapelet (*permettant, favorisant*), niveau 1 sur *dans un monde où*, *force est de constater*, *au cœur de*, *incontournable*, FR3 fausse gamme (*que vous soyez X ou Y*), FR7 clôture générique vide, FR14 uniformité rythmique, quatre phrases entre vingt et trente mots. Score CLI avant : **61/100**.
+**Patterns déclenchés** — FR1 participes en chapelet (*permettant, favorisant*), niveau 1 sur *dans un monde où*, *force est de constater*, *au cœur de*, *incontournable*, FR3 fausse gamme (*que vous soyez X ou Y*), FR7 clôture générique vide, FR14 uniformité rythmique, quatre phrases entre vingt et trente mots. Score scan.py avant : **63/100**.
 
 **Après**
 
@@ -34,7 +34,7 @@ Les entreprises citées sont fictives. Aucun chiffre de ces exemples ne doit êt
 
 **Conservé délibérément** — la question finale, parce que sur LinkedIn c'est une convention du genre et qu'elle appelle une réponse réelle, contrairement à l'originale. La phrase de deux mots isolée. L'image du tableau blanc, qui est une comparaison et non un aphorisme fabriqué au sens de FR11.
 
-Score CLI après : **8/100**. Burstiness passée de 0,21 à 0,58.
+Score scan.py après : **13/100**. (Chiffres mesurés par `scripts/scan.py` v3, 13/08/2026 ; la burstiness d'un texte court reste bruitée, le score et les patterns portent le signal.)
 
 ---
 
@@ -50,7 +50,7 @@ Score CLI après : **8/100**. Burstiness passée de 0,21 à 0,58.
 >
 > N'hésitez pas à revenir vers moi si vous souhaitez échanger davantage. Je reste à votre entière disposition.
 
-**Patterns déclenchés** — P20 artefacts conversationnels (*j'espère que ce message vous trouve*), FR5 triade adjectivale (*innovante, personnalisée et éprouvée*), FR1 participes en chapelet (*garantissant, s'adaptant*), FR7 clôture générique (*n'hésitez pas, à votre entière disposition*), FR2 verbes vides. Aucune information nouvelle dans tout le mail : c'est le vrai défaut, et aucun pattern lexical ne le capture. Score CLI avant : **48/100**.
+**Patterns déclenchés** — P20 artefacts conversationnels (*j'espère que ce message vous trouve*), FR5 triade adjectivale (*innovante, personnalisée et éprouvée*), FR1 participes en chapelet (*garantissant, s'adaptant*), FR7 clôture générique (*n'hésitez pas, à votre entière disposition*), FR2 verbes vides. Aucune information nouvelle dans tout le mail : c'est le vrai défaut, et aucun pattern lexical ne le capture. Score scan.py avant : **56/100**.
 
 **Après**
 
@@ -66,7 +66,7 @@ Score CLI après : **8/100**. Burstiness passée de 0,21 à 0,58.
 
 **Conservé délibérément** — la formule d'appel et la signature, qui ne sont pas des tells. Le mail est passé de quatre-vingt-dix mots à soixante-dix, mais surtout il contient maintenant une information et une demande. Le nettoyage lexical seul n'aurait rien réglé : le mail d'origine était vide, pas mal écrit.
 
-Score CLI après : **5/100**.
+Score scan.py après : **0/100**.
 
 ---
 
@@ -76,7 +76,7 @@ Score CLI après : **5/100**.
 
 > Notre méthodologie s'appuie sur une approche holistique visant à optimiser l'appropriation des outils par vos collaborateurs. À travers un parcours structuré en trois temps, nous procédons à la mise en place d'un dispositif sur mesure, permettant de maximiser l'impact et de garantir un retour sur investissement mesurable, tout en s'inscrivant dans une démarche d'amélioration continue.
 
-**Patterns déclenchés** — FR2 nominalisation (*procédons à la mise en place*, *l'appropriation*, *l'optimisation*), FR1 participes en chapelet (*visant, permettant, s'inscrivant*), niveau 2 en densité (*optimiser, maximiser, garantir, mesurable*), FR12 densité informationnelle plate, une seule idée sur cinquante-sept mots. Score CLI avant : **72/100**.
+**Patterns déclenchés** — FR2 nominalisation (*procédons à la mise en place*, *l'appropriation*, *l'optimisation*), FR1 participes en chapelet (*visant, permettant, s'inscrivant*), niveau 2 en densité (*optimiser, maximiser, garantir, mesurable*), FR12 densité informationnelle plate, une seule idée sur cinquante-sept mots. Score scan.py avant : **58/100**.
 
 **Après**
 
@@ -86,7 +86,7 @@ Score CLI après : **5/100**.
 
 **Point de vigilance sur la contrainte anti-fabrication** — la version réécrite n'ajoute aucun chiffre, aucun délai, aucun nom d'indicateur. Le Concretizer aurait été tenté d'écrire « mesure du temps de rédaction divisé par deux » : cette donnée n'est pas dans la source, donc elle ne peut pas entrer. Sur une proposition commerciale, une invention chiffrée est une faute contractuelle, pas un défaut de style.
 
-Score CLI après : **11/100**.
+Score scan.py après : **23/100**.
 
 ---
 

@@ -1,0 +1,11 @@
+{
+  "name": "humanizer-fr",
+  "owner": {"name": "Matthieu Sabourin", "url": "https://github.com/Matthieusabourin2"},
+  "plugins": [
+    {
+      "name": "humanizer-fr",
+      "source": "./",
+      "description": "Skill Claude qui détecte les tics d'écriture IA en français (68 patterns au total) et réécrit dans votre voix, mesurée depuis votre propre corpus."
+    }
+  ]
+}

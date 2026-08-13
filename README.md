@@ -4,6 +4,8 @@ Skill Claude qui détecte les motifs d'écriture IA et réécrit le texte dans u
 
 *French fork of the humanizer skill: 54 AI-writing patterns + 14 French-specific ones, a 0–100 AI-tell score, 5 built-in voices, and an `-empreinte` command that builds a custom voice profile from your own writing corpus, with real measurements.*
 
+**🧪 Démo en ligne : [catalia.fr/ressources/humanizer](https://www.catalia.fr/ressources/humanizer)** — collez un texte français, obtenez le score et le détail des motifs, 100 % dans votre navigateur (même moteur que `scripts/scan.py`, zéro envoi).
+
 ## Ce que c'est
 
 Un skill pour Claude (claude.ai, Claude Code, et tout éditeur qui lit des fichiers SKILL.md). Pas de serveur, pas de dépendance, pas d'appel réseau : des fichiers Markdown que le modèle lit, plus un `verify.py` optionnel pour tester le paquet.
@@ -15,7 +17,8 @@ Ce qu'il fait :
 - Réécrit dans une des 5 voix intégrées (`casual`, `professional`, `technical`, `warm`, `blunt`) ou dans une voix personnalisée.
 - Construit votre propre profil de voix depuis votre corpus réel avec `-empreinte` : règles mesurées, preuves citées, interdits, paliers d'intensité.
 - Connaît les faux positifs du français : le pronominal, le passif ordinaire ou « notamment » ne sont pas des tells, et le skill ne les signale pas.
-- Vérifie ses propres réécritures avec une porte chiffrée : budgets de densité (contrastes, punchlines de fin de paragraphe, cadratins), scan de cluster local, `scripts/gate.py` qui compte de façon déterministe, et pièges de régression dans `evals/traps.json`.
+- Scanne d'abord, juge ensuite : `scripts/scan.py` (zéro dépendance) détecte les patterns mécaniques en regex, mesure burstiness, MATTR et répétition de trigrammes, et produit le score 0-100 reproductible en moins de 0,1 s ; le modèle n'ajoute que le jugement contextuel.
+- Vérifie ses propres réécritures avec une porte chiffrée : budgets de densité (contrastes, punchlines de fin de paragraphe, cadratins), scan de cluster local, `scripts/gate.py` qui compte de façon déterministe — y compris le contrat chiffré de votre profil de voix (`--profile`) — et pièges de régression dans `evals/traps.json`.
 
 ## Ce que ce n'est pas
 
@@ -98,11 +101,12 @@ Deux garde-fous structurants, hérités des régressions constatées en amont et
 humanizer/
   SKILL.md                        point d'entrée, 4 passes, garde-fous, préséance
   CHANGELOG.md                    manifeste de rebase : toutes les divergences vs l'amont
-  verify.py                       114 tests d'intégrité du paquet (python3 verify.py)
+  verify.py                       123 tests d'intégrité du paquet (python3 verify.py)
   scripts/
-    gate.py                       porte chiffrée : cadratins, contrastes, kickers, clusters, tier 1
+    scan.py                       scanner déterministe : patterns en regex, métriques, score 0-100
+    gate.py                       porte chiffrée : cadratins, contrastes, kickers, clusters, tier 1, profil
   references/
-    patterns.md                   catalogue P1–P53 (anglais, hérité de l'amont)
+    patterns.md                   catalogue P1–P54 (anglais, hérité de l'amont)
     patterns.fr.md                catalogue FR1–FR14 + faux positifs français
     examples.fr.md                3 exemples travaillés, scores avant/après
     empreinte.md                  procédure -empreinte complète (6 passes, 2 tests)
@@ -117,7 +121,7 @@ site/
   tests.html                      page de test publiable (statique, autonome), ressource catalia.fr
 ```
 
-Le CHANGELOG n'est pas décoratif : c'est un manifeste de rebase. Quand l'amont publie une version, on réapplique les divergences listées (D1–D21) et on relance `verify.py`.
+Le CHANGELOG n'est pas décoratif : c'est un manifeste de rebase. Quand l'amont publie une version, on réapplique les divergences listées (D1–D26) et on relance `verify.py`.
 
 ## Tests
 
@@ -127,7 +131,7 @@ Une version publiable de cette documentation existe en page statique autonome : 
 
 ## Généalogie et crédits
 
-Fork de [Aboudjem/humanizer-skill](https://github.com/Aboudjem/humanizer-skill) 0.5.0 (Adam Boudjemaa, MIT), lui-même héritier de [blader/humanizer](https://github.com/blader/humanizer) et adossé à [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing). Ce fork ajoute : le catalogue français et ses faux positifs, les exemples et évals FR, la commande `-empreinte` et son contrat de profil mesuré, les profils embarqués, la clause de préséance des skills de voix, le garde anti-fabrication re-durci, et `verify.py`.
+Fork de [Aboudjem/humanizer-skill](https://github.com/Aboudjem/humanizer-skill) 0.5.0 (Adam Boudjemaa, MIT), lui-même héritier de [blader/humanizer](https://github.com/blader/humanizer) et adossé à [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing). Ce fork ajoute : le catalogue français et ses faux positifs, les exemples et évals FR, la commande `-empreinte` et son contrat de profil mesuré, les profils embarqués, la clause de préséance des skills de voix, le garde anti-fabrication re-durci, le scanner déterministe `scan.py`, la porte chiffrée `gate.py`, et `verify.py`.
 
 ## Licence
 
