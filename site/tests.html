@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La suite de tests du humanizer-fr | Catalia</title>
-<meta name="description" content="114 vérifications de paquet, une porte chiffrée déterministe, 11 cas de déclenchement, 10 pièges de régression : comment le skill humanizer-fr se teste. Ressource Catalia.">
+<meta name="description" content="123 vérifications de paquet, une porte chiffrée à 6 compteurs, 11 cas de déclenchement, 13 pièges de régression : comment le skill humanizer-fr se teste. Ressource Catalia.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M10 5 L22 16 L10 27' fill='none' stroke='%23FD7800' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -246,17 +246,18 @@ footer p{margin-bottom:6px;max-width:56ch}
     </g>
   </svg>
   <div class="wrap">
-    <span class="eyebrow">Ressource Catalia · humanizer-fr 2.3.0-fr</span>
+    <span class="eyebrow">Ressource Catalia · humanizer-fr 3.0.0-fr</span>
     <h1>La suite de tests du humanizer&#8209;fr</h1>
     <p class="lead">Un skill est de la prose qui prétend gouverner un modèle. Sans tests, cette prose dérive sans que personne ne le voie. Cette page documente les quatre couches de vérification du skill humanizer-fr, leurs seuils, et la règle qui gouverne leur évolution.</p>
     <div class="stats">
-      <div class="stat"><b>114</b><span>vérifications du paquet (verify.py)</span></div>
-      <div class="stat"><b>5</b><span>compteurs déterministes (gate.py)</span></div>
+      <div class="stat"><b>123</b><span>vérifications du paquet (verify.py)</span></div>
+      <div class="stat"><b>6</b><span>compteurs déterministes (gate.py)</span></div>
       <div class="stat"><b>11</b><span>cas de déclenchement (evals.fr.json)</span></div>
-      <div class="stat"><b>10</b><span>pièges de régression (traps.json)</span></div>
+      <div class="stat"><b>13</b><span>pièges de régression (traps.json)</span></div>
     </div>
     <div class="actions">
-      <a class="btn btn-primary" href="https://github.com/Matthieusabourin2/humanizer-fr">Voir le dépôt GitHub</a>
+      <a class="btn btn-primary" href="https://www.catalia.fr/ressources/humanizer">Tester la démo en ligne</a>
+      <a class="btn btn-ghost" href="https://github.com/Matthieusabourin2/humanizer-fr">Voir le dépôt GitHub</a>
       <a class="btn btn-ghost" href="https://humanizer-skill.vercel.app/">La page du skill amont</a>
     </div>
   </div>
@@ -286,14 +287,14 @@ footer p{margin-bottom:6px;max-width:56ch}
         <h3>Le harnais du paquet</h3>
         <p><code>verify.py</code> vérifie que tout ce que SKILL.md promet existe réellement : références, commandes, garde-fous, seuils. Il échoue bruyamment.</p>
 
-        <span class="verdict">114 checks · sortie 0 ou 1 · exécution locale</span>
+        <span class="verdict">123 checks · sortie 0 ou 1 · exécution locale</span>
       </div>
       <div class="card">
         <span class="num">2</span>
         <h3>La porte chiffrée</h3>
-        <p><code>scripts/gate.py</code> compte de façon déterministe ce que le modèle doit montrer après une réécriture : cadratins, contrastes, atterrissages, clusters, vocabulaire.</p>
+        <p><code>scripts/gate.py</code> compte de façon déterministe ce que le modèle doit montrer après une réécriture : cadratins, contrastes, atterrissages, clusters, vocabulaire, contrat du profil de voix.</p>
 
-        <span class="verdict">5 compteurs · PASS ou FAIL · exécution locale</span>
+        <span class="verdict">6 compteurs · PASS ou FAIL · exécution locale</span>
       </div>
       <div class="card">
         <span class="num">3</span>
@@ -307,7 +308,7 @@ footer p{margin-bottom:6px;max-width:56ch}
         <h3>Les pièges de régression</h3>
         <p><code>evals/traps.json</code> distille des échecs réels en cas rejouables, pour que chaque erreur déjà corrigée ne puisse plus revenir sans déclencher une alarme.</p>
 
-        <span class="verdict">10 pièges · protocole A/B · gate.py en juge</span>
+        <span class="verdict">13 pièges · protocole A/B · gate.py en juge</span>
       </div>
     </div>
   </div>
@@ -325,7 +326,7 @@ footer p{margin-bottom:6px;max-width:56ch}
   OK    table de rationalisations presente
   OK    constantes de gate.py justifiees
 <span class="dim">============================================================</span>
-<span class="ok">114 tests passés, 0 échecs</span>
+<span class="ok">123 tests passés, 0 échecs</span>
 <span class="ok">Package vérifié.</span></pre></div>
 
     <h3>Les 15 sections du harnais</h3>
@@ -345,7 +346,7 @@ footer p{margin-bottom:6px;max-width:56ch}
           <tr><td>10</td><td>Jeu d'évaluation</td><td>Le fichier d'evals existe, avec cas négatifs, anti-fabrication, préséance et -empreinte couverts</td></tr>
           <tr><td>11</td><td>Déclenchement</td><td>Chaque cas qui doit déclencher a un terme de son prompt dans la description ; le périmètre négatif est nommé</td></tr>
           <tr><td>12</td><td>Maintenabilité</td><td>Version et amont tracés, CHANGELOG en manifeste de rebase avec toutes les divergences documentées</td></tr>
-          <tr><td>13</td><td>Vérificateur CLI</td><td>Si le CLI amont est présent : tokenizer unicode correct, le juge sépare prose truffée et prose humaine</td></tr>
+          <tr><td>13</td><td>Vérificateur déterministe</td><td>Le scanner scan.py : tokenizer unicode, routé avant la réécriture, sépare prose truffée et prose humaine, mêmes chiffres sur deux passes</td></tr>
           <tr><td>14</td><td>Porte chiffrée</td><td>Budgets, scan de cluster et numbers gate promis dans SKILL.md, puis gate.py exécuté sur 7 échantillons de contrôle</td></tr>
           <tr><td>15</td><td>Conformité skill-authoring</td><td>Corps sous 500 lignes, table de rationalisations, constantes justifiées, terme canonique dominant</td></tr>
         </tbody>
@@ -361,7 +362,7 @@ footer p{margin-bottom:6px;max-width:56ch}
     <h2>gate.py : la porte chiffrée</h2>
     <p>Le modèle qui vient de réécrire un texte est le plus mal placé pour jurer que ce texte est propre. <code>gate.py</code> compte à sa place, de façon déterministe, et rend un verdict que personne ne peut négocier. C'est l'implémentation exécutable du numbers gate de SKILL.md.</p>
 
-    <h3>Les 5 compteurs</h3>
+    <h3>Les 6 compteurs</h3>
     <div class="tablewrap">
       <table>
         <thead><tr><th>#</th><th>Compteur</th><th>Seuil</th><th>Pourquoi ce seuil</th></tr></thead>
@@ -371,6 +372,7 @@ footer p{margin-bottom:6px;max-width:56ch}
           <tr><td>3</td><td>Atterrissages de paragraphe (P54)</td><td>ratio 0,25 max, jamais 2 d'affilée</td><td>Le mail fautif de référence sortait à 0,28 ; les contrôles humains sortaient à 0</td></tr>
           <tr><td>4</td><td>Clusters locaux</td><td>0 fenêtre de 4 phrases à 2 familles</td><td>La taille du cluster réellement observé dans l'incident qui a calibré le script</td></tr>
           <tr><td>5</td><td>Vocabulaire Tier 1, EN et FR</td><td>0 occurrence</td><td>« delve », « tapestry », « incontournable », « dans un monde où » : indéfendables en prose humaine</td></tr>
+          <tr><td>6</td><td>Contrat du profil de voix (--profile)</td><td>interdits 0, plafonds à la fréquence attestée</td><td>La signature d'un auteur est attestée à une fréquence, sur une surface : le check lit le contrat chiffré du bloc Voice et l'applique, citations toujours masquées</td></tr>
         </tbody>
       </table>
     </div>
@@ -417,7 +419,7 @@ words=82  dashes=0  contrast=0/1  kickers=0/2 (run 0)  clusters=0  tier1=0
   <div class="wrap">
     <span class="kicker">Couche 4</span>
     <h2>traps.json : les pièges de régression</h2>
-    <p>10 pièges distillés d'échecs réels observés le 12/08/2026 : une passe cosmétique sur un mail commercial anglais, un cadratin de signature exempté à tort, un cluster local invisible dans des totaux globaux propres. Chaque cas suit le format d'eval officiel Anthropic, et les cas marqués <span class="pill gate">gate</span> sont vérifiables mécaniquement en passant la sortie à <code>gate.py</code>.</p>
+    <p>13 pièges distillés d'échecs réels : une passe cosmétique sur un mail commercial anglais, un cadratin de signature exempté à tort, un cluster local invisible dans des totaux globaux propres, puis trois échecs de la v3 autour du scanner et du contrat de profil. Chaque cas suit le format d'eval officiel Anthropic, et les cas marqués <span class="pill gate">gate</span> sont vérifiables mécaniquement en passant la sortie à <code>gate.py</code>.</p>
     <div class="tablewrap">
       <table>
         <thead><tr><th>Piège</th><th>Juge</th><th>Ce qui ne doit plus jamais se reproduire</th></tr></thead>
@@ -432,6 +434,9 @@ words=82  dashes=0  contrast=0/1  kickers=0/2 (run 0)  clusters=0  tier1=0
           <tr><td><code>trap-fabrication</code></td><td><span class="pill manual">manuel</span></td><td>Inventer un chiffre pour concrétiser une abstraction</td></tr>
           <tr><td><code>trap-too-short</code></td><td><span class="pill gate">gate</span></td><td>Noter un texte sous 40 mots</td></tr>
           <tr><td><code>trap-zero-punch</code></td><td><span class="pill gate">gate</span></td><td>Injecter des punchlines pour « humaniser » un texte plat : les seuils sont des plafonds, jamais des cibles</td></tr>
+          <tr><td><code>trap-scan-first</code></td><td><span class="pill manual">manuel</span></td><td>Analyser un texte sans exécuter scan.py d'abord : le score et les patterns du scanner se citent tels quels</td></tr>
+          <tr><td><code>trap-profile-frequence</code></td><td><span class="pill gate">gate</span></td><td>Garder 3 exemplaires d'une formule signature plafonnée à 1 par le contrat du profil</td></tr>
+          <tr><td><code>trap-voice-fabrication</code></td><td><span class="pill manual">manuel</span></td><td>Inventer un appel à l'action ou un engagement absent de la source au nom de la voix de l'auteur</td></tr>
         </tbody>
       </table>
     </div>

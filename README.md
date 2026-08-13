@@ -125,7 +125,7 @@ Le CHANGELOG n'est pas décoratif : c'est un manifeste de rebase. Quand l'amont 
 
 ## Tests
 
-La suite tient en quatre couches, toutes documentées dans [`docs/tests.md`](docs/tests.md) : le harnais du paquet (`verify.py`, 114 checks), la porte chiffrée (`scripts/gate.py`, 5 compteurs déterministes), les cas de déclenchement (`evals/evals.fr.json`, 11 cas) et les pièges de régression (`evals/traps.json`, 10 pièges, protocole de rejeu A/B).
+La suite tient en quatre couches, toutes documentées dans [`docs/tests.md`](docs/tests.md) : le harnais du paquet (`verify.py`, 123 checks), la porte chiffrée (`scripts/gate.py`, 6 compteurs déterministes, contrat de profil compris), les cas de déclenchement (`evals/evals.fr.json`, 11 cas) et les pièges de régression (`evals/traps.json`, 13 pièges, protocole de rejeu A/B).
 
 Une version publiable de cette documentation existe en page statique autonome : [`site/tests.html`](site/tests.html), destinée à être publiée comme ressource sur [catalia.fr](https://www.catalia.fr). Contrat de la page : ses chiffres se mettent à jour dans le même commit que le code, et sa prose française passe sa propre porte (`gate.py --fr` sort PASS sur le texte extrait — la commande de vérification est dans `docs/tests.md`).
 

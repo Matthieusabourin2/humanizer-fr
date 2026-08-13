@@ -2,14 +2,14 @@
 
 Un skill est de la prose qui prétend gouverner un modèle. Sans tests, cette prose dérive : une section réécrite casse un comportement promis trois versions plus tôt, et personne ne le voit avant l'échec en production. Ce document décrit l'ensemble des tests définis dans ce dépôt, ce que chacun couvre, comment le lancer, et la règle qui gouverne leur évolution.
 
-La suite tient en quatre couches. Aucune ne juge la qualité rédactionnelle : chacune vérifie qu'une promesse précise du paquet existe et se comporte comme annoncé.
+La suite tient en quatre couches. Aucune ne juge la qualité rédactionnelle : chacune vérifie qu'une promesse précise du paquet existe et se comporte comme annoncé. Depuis la 3.0.0-fr, la détection elle-même est déterministe : `scripts/scan.py` produit le score 0-100 et les patterns mécaniques en moins de 0,1 s, le harnais le teste (section 13), et la [démo en ligne](https://www.catalia.fr/ressources/humanizer) tourne sur le même moteur.
 
 | Couche | Fichier | Ce qu'elle teste | Verdict | Exécution |
 |---|---|---|---|---|
-| Harnais du paquet | `humanizer/verify.py` | L'intégrité structurelle : tout ce que SKILL.md promet existe | 114 checks, sortie 0/1 | automatique, locale |
-| Porte chiffrée | `humanizer/scripts/gate.py` | Une sortie du skill respecte les budgets de densité | PASS/FAIL déterministe | automatique, locale |
+| Harnais du paquet | `humanizer/verify.py` | L'intégrité structurelle : tout ce que SKILL.md promet existe | 123 checks, sortie 0/1 | automatique, locale |
+| Porte chiffrée | `humanizer/scripts/gate.py` | Une sortie du skill respecte les budgets de densité et le contrat du profil | PASS/FAIL déterministe | automatique, locale |
 | Cas de déclenchement | `humanizer/evals/evals.fr.json` | Le skill se déclenche (ou pas) sur les bons prompts | 11 cas, attentes textuelles | rejeu manuel multi-modèles |
-| Pièges de régression | `humanizer/evals/traps.json` | Les échecs réels déjà corrigés ne reviennent pas | 10 pièges, protocole A/B | rejeu manuel + gate.py |
+| Pièges de régression | `humanizer/evals/traps.json` | Les échecs réels déjà corrigés ne reviennent pas | 13 pièges, protocole A/B | rejeu manuel + gate.py |
 
 Une version publiable de cette documentation existe sous forme de page statique autonome : [`site/tests.html`](../site/tests.html), destinée à être publiée comme ressource sur catalia.fr. Sa maintenance est décrite en fin de document.
 
@@ -26,7 +26,7 @@ python3 humanizer/verify.py            # depuis la racine du dépôt
 python3 verify.py                      # depuis humanizer/
 ```
 
-Sortie 0 si tout passe, 1 sinon, avec la liste des échecs. État au 12/08/2026 : **114 tests passés, 0 échec**.
+Sortie 0 si tout passe, 1 sinon, avec la liste des échecs. État au 13/08/2026 (v3.0.0-fr) : **123 tests passés, 0 échec**.
 
 **Les 15 sections :**
 
@@ -43,8 +43,8 @@ Sortie 0 si tout passe, 1 sinon, avec la liste des échecs. État au 12/08/2026 
 | 9 | Métriques non mesurables | Le skill s'interdit de citer burstiness ou perplexité qu'il ne peut pas calculer ; plancher de 40 mots pour noter |
 | 10 | Jeu d'évaluation | `evals.fr.json` existe, au moins 10 cas, cas négatifs, anti-fabrication, préséance et `-empreinte` couverts |
 | 11 | Déclenchement | Chaque cas d'eval qui doit déclencher a au moins un terme de son prompt dans la description du frontmatter ; le périmètre négatif est nommé |
-| 12 | Maintenabilité | Version et amont tracés dans le frontmatter, CHANGELOG en manifeste de rebase (divergences D1–D21, procédure, retraits amont) |
-| 13 | Vérificateur CLI | Si le CLI amont est présent : tokenizer unicode, le juge sépare prose truffée (> 40) et prose humaine (< 20). Section ignorée sinon |
+| 12 | Maintenabilité | Version et amont tracés dans le frontmatter, CHANGELOG en manifeste de rebase (divergences D1–D26, procédure, retraits amont) |
+| 13 | Vérificateur déterministe | `scan.py` : tokenizer unicode, routé avant la réécriture dans SKILL.md, sépare prose truffée (> 40) et prose humaine (< 20), détecte FR1/FR5/FR7, mêmes chiffres sur deux passes |
 | 14 | Porte chiffrée v2.2 | P54 au catalogue, budgets de densité, scan de cluster, numbers gate obligatoire, et exécution réelle de `gate.py` sur 7 échantillons de contrôle |
 | 15 | Conformité skill-authoring | Corps de SKILL.md sous 500 lignes, table de rationalisations, constantes de `gate.py` justifiées, terme canonique dominant |
 
@@ -56,7 +56,7 @@ La section 14 mérite une lecture : elle ne vérifie pas seulement que `gate.py`
 
 ## 2. `gate.py` : la porte chiffrée
 
-**Ce que c'est.** Le garde-fou contre l'auto-notation. Le modèle qui vient de réécrire un texte est le plus mal placé pour jurer qu'il est propre ; `gate.py` compte à sa place, de façon déterministe. C'est l'implémentation exécutable des checks 1 à 5 du numbers gate de SKILL.md.
+**Ce que c'est.** Le garde-fou contre l'auto-notation. Le modèle qui vient de réécrire un texte est le plus mal placé pour jurer qu'il est propre ; `gate.py` compte à sa place, de façon déterministe. C'est l'implémentation exécutable du numbers gate de SKILL.md, contrat de profil compris.
 
 **Lancement :**
 
@@ -65,11 +65,12 @@ python3 humanizer/scripts/gate.py texte.txt            # anglais par défaut
 python3 humanizer/scripts/gate.py texte.txt --fr       # catalogue français
 cat texte.txt | python3 humanizer/scripts/gate.py -    # depuis stdin
 python3 humanizer/scripts/gate.py texte.txt --json     # sortie machine
+python3 humanizer/scripts/gate.py texte.txt --profile humanizer-context.md   # + contrat du profil (check 6)
 ```
 
 Sortie 0 = conforme, 1 = violations (listées une par une).
 
-**Les 5 checks :**
+**Les 6 checks :**
 
 | # | Check | Seuil | Pourquoi ce seuil |
 |---|---|---|---|
@@ -78,6 +79,7 @@ Sortie 0 = conforme, 1 = violations (listées une par une).
 | 3 | Atterrissages de paragraphe (P54, kickers ≤ 9 mots) | ratio ≤ 0,25 et jamais 2 d'affilée | 1 atterrissage autorisé par 4 paragraphes ; le mail fautif de référence sortait à 0,28, les contrôles humains à 0 |
 | 4 | Clusters locaux | 0 fenêtre de 4 phrases portant 2+ familles structurelles | Taille du cluster réellement observé dans l'incident de référence |
 | 5 | Vocabulaire Tier 1 (EN et FR niveau 1) | 0 occurrence | « delve », « tapestry » / « incontournable », « dans un monde où »… indéfendables en prose humaine |
+| 6 | Contrat du profil de voix (`--profile`) | interdits = 0, plafonds à la fréquence attestée, surfaces respectées | La signature d'un auteur est attestée à une fréquence et sur une surface : le check lit le contrat chiffré du bloc `## Voice` et l'applique, citations toujours masquées |
 
 Trois garde-fous d'ingénierie autour de ces comptes :
 
@@ -113,7 +115,7 @@ Trois garde-fous d'ingénierie autour de ces comptes :
 
 ## 4. `traps.json` : les pièges de régression
 
-**Ce que c'est.** 10 pièges distillés d'échecs réels observés le 12/08/2026 : passe cosmétique sur un mail commercial anglais, cadratin de signature exempté à tort, cluster local invisible dans des totaux globaux propres, contrainte de surface d'un profil ignorée. Chaque cas suit le format d'eval officiel Anthropic (`query` + `expected_behavior`). Les cas `gate: true` sont vérifiables mécaniquement en passant la sortie à `gate.py`.
+**Ce que c'est.** 13 pièges distillés d'échecs réels : la salve du 12/08/2026 : passe cosmétique sur un mail commercial anglais, cadratin de signature exempté à tort, cluster local invisible dans des totaux globaux propres, contrainte de surface d'un profil ignorée, puis trois échecs de la v3 (scanner court-circuité, plafond de fréquence du profil dépassé, appel à l'action inventé au nom de la voix). Chaque cas suit le format d'eval officiel Anthropic (`query` + `expected_behavior`). Les cas `gate: true` sont vérifiables mécaniquement en passant la sortie à `gate.py`.
 
 | id | gate | Le piège |
 |---|---|---|
@@ -127,6 +129,9 @@ Trois garde-fous d'ingénierie autour de ces comptes :
 | `trap-fabrication` | non | Aucun chiffre inventé pour concrétiser une abstraction (régression D1) |
 | `trap-too-short` | oui | Sous 40 mots, refus de noter |
 | `trap-zero-punch` | oui | Plafonds, pas cibles : on n'injecte pas de punchlines pour « humaniser » un texte plat |
+| `trap-scan-first` | non | Le modèle exécute `scan.py` avant toute analyse et cite son score et ses patterns tels quels |
+| `trap-profile-frequence` | oui | Une formule signature plafonnée à 1 par le contrat du profil ne survit pas en 3 exemplaires |
+| `trap-voice-fabrication` | non | Aucun appel à l'action ni engagement inventé au nom de la voix de l'auteur |
 
 **Protocole de rejeu A/B.** Ne jamais faire noter le skill par l'instance qui vient de l'éditer. Rejouer chaque `query` dans une session neuve, sur Haiku, Sonnet et Opus, vérifier chaque assertion d'`expected_behavior`, puis passer la sortie à `gate.py` quand `gate: true`.
 
