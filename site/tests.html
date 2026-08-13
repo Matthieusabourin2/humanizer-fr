@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La suite de tests du humanizer-fr | Catalia</title>
+<meta name="description" content="123 vérifications de paquet, une porte chiffrée à 6 compteurs, 11 cas de déclenchement, 13 pièges de régression : comment le skill humanizer-fr se teste. Ressource Catalia.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M10 5 L22 16 L10 27' fill='none' stroke='%23FD7800' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --aubergine:#570047;
+  --aubergine-deep:#3d0032;
+  --yellow-gold:#FDB81D;
+  --amber:#FE9900;
+  --orange:#FD7800;
+  --orange-red:#FE4F00;
+  --red-orange:#FD3D00;
+  --pink-red:#FF3F4C;
+  --pink:#FCCED9;
+  --blue-gray:#B2C0C9;
+  --med-gray:#7B7C80;
+  --off-white:#F5F5F5;
+  --white:#FFFFFF;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Season Mix","Nunito Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--off-white);
+  color:var(--aubergine);
+  line-height:1.65;
+  font-size:17px;
+}
+a{color:var(--red-orange);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;
+  background:var(--aubergine);
+  color:var(--white);
+  overflow:hidden;
+  padding:72px 0 64px;
+}
+.hero svg.deco{position:absolute;pointer-events:none}
+.hero .eyebrow{
+  display:inline-block;
+  font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--yellow-gold);
+  margin-bottom:18px;
+}
+.hero h1{
+  font-size:clamp(34px,5.4vw,58px);
+  font-weight:900;line-height:1.08;
+  max-width:17ch;
+  margin-bottom:22px;
+}
+.hero .lead{
+  font-size:clamp(17px,2vw,20px);
+  max-width:62ch;
+  color:rgba(255,255,255,.92);
+  margin-bottom:36px;
+}
+.stats{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:38px}
+.stat{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:14px;
+  padding:14px 20px;
+  min-width:150px;
+}
+.stat b{display:block;font-size:30px;font-weight:900;line-height:1.1}
+.stat span{font-size:13.5px;color:rgba(255,255,255,.75)}
+.stat:nth-child(1) b{color:var(--yellow-gold)}
+.stat:nth-child(2) b{color:var(--orange)}
+.stat:nth-child(3) b{color:var(--pink-red)}
+.stat:nth-child(4) b{color:var(--pink)}
+.hero .actions{display:flex;flex-wrap:wrap;gap:12px}
+.btn{
+  display:inline-block;border-radius:999px;
+  padding:11px 22px;font-weight:700;font-size:15px;
+}
+.btn-primary{background:var(--orange);color:var(--white)}
+.btn-primary:hover{background:var(--orange-red);text-decoration:none}
+.btn-ghost{border:1.5px solid rgba(255,255,255,.4);color:var(--white)}
+.btn-ghost:hover{border-color:var(--white);text-decoration:none}
+
+/* ---------- toc ---------- */
+.toc{
+  background:var(--white);
+  border-bottom:1px solid #e6e0e4;
+}
+.toc .wrap{display:flex;flex-wrap:wrap;gap:8px;padding-top:14px;padding-bottom:14px}
+.toc a{
+  font-size:13.5px;font-weight:700;color:var(--aubergine);
+  background:var(--off-white);
+  border:1px solid #e6e0e4;
+  border-radius:999px;padding:6px 14px;
+}
+.toc a:hover{background:var(--pink);text-decoration:none}
+
+/* ---------- sections ---------- */
+section{padding:64px 0}
+section.alt{background:var(--white)}
+.kicker{
+  font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:10px;
+}
+h2{font-size:clamp(26px,3.4vw,38px);font-weight:900;line-height:1.15;margin-bottom:18px;max-width:24ch}
+h3{font-size:20px;font-weight:800;margin:30px 0 10px}
+p{max-width:72ch;margin-bottom:14px}
+.note{
+  border-left:4px solid var(--yellow-gold);
+  background:#fff8e8;
+  padding:14px 18px;border-radius:0 10px 10px 0;
+  max-width:72ch;margin:18px 0;
+}
+
+/* ---------- cards couches ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:28px}
+.card{
+  background:var(--white);
+  border:1px solid #e6e0e4;
+  border-radius:16px;
+  padding:24px 22px;
+  display:flex;flex-direction:column;gap:8px;
+}
+section.alt .card{background:var(--off-white)}
+.card .num{font-size:40px;font-weight:900;line-height:1}
+.card:nth-child(1) .num{color:var(--yellow-gold)}
+.card:nth-child(2) .num{color:var(--orange)}
+.card:nth-child(3) .num{color:var(--pink-red)}
+.card:nth-child(4) .num{color:var(--red-orange)}
+.card h3{margin:0;font-size:18px}
+.card code{font-size:13px}
+.card p{font-size:14.5px;margin:0;color:#5c3a54}
+.card .verdict{font-size:12.5px;font-weight:700;color:var(--med-gray);margin-top:auto;padding-top:8px}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;margin:22px 0;border:1px solid #e6e0e4;border-radius:14px;background:var(--white)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14.5px}
+th{
+  text-align:left;background:var(--aubergine);color:var(--white);
+  font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+  padding:12px 16px;
+}
+td{padding:11px 16px;border-top:1px solid #efe9ed;vertical-align:top}
+tr:nth-child(even) td{background:#faf7f9}
+td:first-child{font-weight:800;white-space:nowrap}
+code{
+  font-family:var(--mono);font-size:.88em;
+  background:#f0e8ee;border-radius:5px;padding:1.5px 6px;
+}
+.pill{
+  display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.05em;
+  border-radius:999px;padding:2px 10px;text-transform:uppercase;
+}
+.pill.gate{background:var(--aubergine);color:var(--yellow-gold)}
+.pill.manual{background:var(--blue-gray);color:var(--aubergine)}
+
+/* ---------- terminal ---------- */
+.term{
+  background:var(--aubergine-deep);
+  color:#f3e7f0;
+  border-radius:14px;
+  padding:20px 22px;
+  font-family:var(--mono);
+  font-size:13.5px;line-height:1.75;
+  overflow-x:auto;
+  margin:22px 0;
+  max-width:860px;
+}
+.term .cmd{color:var(--yellow-gold)}
+.term .cmd::before{content:"$ ";color:var(--pink-red)}
+.term .ok{color:#7ee081}
+.term .ko{color:var(--pink-red)}
+.term .dim{color:#b393ab}
+pre{margin:0;white-space:pre}
+
+/* ---------- steps ---------- */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:26px;counter-reset:step}
+.step{
+  background:var(--white);border:1px solid #e6e0e4;border-radius:16px;padding:22px;
+  counter-increment:step;
+}
+.step::before{
+  content:counter(step);
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:50%;
+  background:var(--red-orange);color:var(--white);
+  font-weight:900;font-size:17px;margin-bottom:12px;
+}
+.step p{font-size:14.5px;margin:0;color:#5c3a54}
+.step b{display:block;margin-bottom:6px;color:var(--aubergine)}
+
+/* ---------- statement ---------- */
+.statement{
+  background:var(--red-orange);
+  color:var(--white);
+  position:relative;overflow:hidden;
+}
+.statement h2{color:var(--yellow-gold);max-width:28ch}
+.statement p{color:rgba(255,255,255,.95)}
+.statement svg.deco{position:absolute;right:-40px;top:50%;transform:translateY(-50%);opacity:.25;pointer-events:none}
+
+/* ---------- footer ---------- */
+footer{
+  background:var(--aubergine);
+  color:rgba(255,255,255,.85);
+  padding:48px 0 40px;
+  font-size:14.5px;
+}
+footer .cols{display:flex;flex-wrap:wrap;gap:34px;justify-content:space-between}
+footer a{color:var(--yellow-gold)}
+footer .brand{font-weight:900;font-size:20px;color:var(--white);margin-bottom:8px}
+footer .brand svg{vertical-align:-3px;margin-right:6px}
+footer p{margin-bottom:6px;max-width:56ch}
+@media (max-width:640px){
+  .stats{gap:10px}
+  .stat{min-width:calc(50% - 6px)}
+  section{padding:48px 0}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <svg class="deco" style="top:-30px;right:4%" width="340" height="340" viewBox="0 0 340 340" aria-hidden="true">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M40 40 L90 85 L40 130" stroke="#FDB81D" stroke-width="26" opacity=".55"/>
+      <path d="M170 20 L215 60 L170 100" stroke="#FD7800" stroke-width="22" opacity=".5" transform="rotate(18 190 60)"/>
+      <path d="M250 120 L300 165 L250 210" stroke="#FF3F4C" stroke-width="26" opacity=".45"/>
+      <path d="M110 180 L150 216 L110 252" stroke="#FE4F00" stroke-width="18" opacity=".5" transform="rotate(-14 130 216)"/>
+      <path d="M210 250 L252 288 L210 326" stroke="#FDB81D" stroke-width="20" opacity=".4" transform="rotate(10 230 288)"/>
+    </g>
+  </svg>
+  <svg class="deco" style="bottom:-60px;left:-40px" width="240" height="240" viewBox="0 0 240 240" aria-hidden="true">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".3">
+      <path d="M40 60 L95 110 L40 160" stroke="#FF3F4C" stroke-width="30"/>
+      <path d="M130 100 L175 140 L130 180" stroke="#FD7800" stroke-width="22" transform="rotate(22 150 140)"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <span class="eyebrow">Ressource Catalia · humanizer-fr 3.0.0-fr</span>
+    <h1>La suite de tests du humanizer&#8209;fr</h1>
+    <p class="lead">Un skill est de la prose qui prétend gouverner un modèle. Sans tests, cette prose dérive sans que personne ne le voie. Cette page documente les quatre couches de vérification du skill humanizer-fr, leurs seuils, et la règle qui gouverne leur évolution.</p>
+    <div class="stats">
+      <div class="stat"><b>123</b><span>vérifications du paquet (verify.py)</span></div>
+      <div class="stat"><b>6</b><span>compteurs déterministes (gate.py)</span></div>
+      <div class="stat"><b>11</b><span>cas de déclenchement (evals.fr.json)</span></div>
+      <div class="stat"><b>13</b><span>pièges de régression (traps.json)</span></div>
+    </div>
+    <div class="actions">
+      <a class="btn btn-primary" href="https://www.catalia.fr/ressources/humanizer">Tester la démo en ligne</a>
+      <a class="btn btn-ghost" href="https://github.com/Matthieusabourin2/humanizer-fr">Voir le dépôt GitHub</a>
+      <a class="btn btn-ghost" href="https://humanizer-skill.vercel.app/">La page du skill amont</a>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sommaire">
+  <div class="wrap">
+    <a href="#couches">Les quatre couches</a>
+    <a href="#verify">verify.py</a>
+    <a href="#gate">gate.py</a>
+    <a href="#evals">Cas de déclenchement</a>
+    <a href="#pieges">Pièges de régression</a>
+    <a href="#regle">La règle d'édition</a>
+  </div>
+</nav>
+
+<main>
+
+<section id="couches">
+  <div class="wrap">
+    <span class="kicker">Vue d'ensemble</span>
+    <h2>Quatre couches, quatre promesses tenues</h2>
+    <p>Aucune de ces couches ne juge la qualité rédactionnelle d'un texte. Chacune vérifie qu'une promesse précise du paquet existe et se comporte comme annoncé : c'est la différence entre relire un skill et le tester.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="num">1</span>
+        <h3>Le harnais du paquet</h3>
+        <p><code>verify.py</code> vérifie que tout ce que SKILL.md promet existe réellement : références, commandes, garde-fous, seuils. Il échoue bruyamment.</p>
+
+        <span class="verdict">123 checks · sortie 0 ou 1 · exécution locale</span>
+      </div>
+      <div class="card">
+        <span class="num">2</span>
+        <h3>La porte chiffrée</h3>
+        <p><code>scripts/gate.py</code> compte de façon déterministe ce que le modèle doit montrer après une réécriture : cadratins, contrastes, atterrissages, clusters, vocabulaire, contrat du profil de voix.</p>
+
+        <span class="verdict">6 compteurs · PASS ou FAIL · exécution locale</span>
+      </div>
+      <div class="card">
+        <span class="num">3</span>
+        <h3>Les cas de déclenchement</h3>
+        <p><code>evals/evals.fr.json</code> vérifie que le skill se déclenche sur les bons prompts, reste muet sur les mauvais, et fait ce qu'il annonce une fois lancé.</p>
+
+        <span class="verdict">11 cas · rejeu manuel sur 3 modèles</span>
+      </div>
+      <div class="card">
+        <span class="num">4</span>
+        <h3>Les pièges de régression</h3>
+        <p><code>evals/traps.json</code> distille des échecs réels en cas rejouables, pour que chaque erreur déjà corrigée ne puisse plus revenir sans déclencher une alarme.</p>
+
+        <span class="verdict">13 pièges · protocole A/B · gate.py en juge</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="verify" class="alt">
+  <div class="wrap">
+    <span class="kicker">Couche 1</span>
+    <h2>verify.py : le harnais du paquet</h2>
+    <p>Le défaut classique d'un skill qui vieillit : référencer un fichier absent, promettre une commande qui n'est plus routée, renuméroter un catalogue sans mettre à jour le compteur. <code>verify.py</code> attrape tout cela en une commande, sans dépendance, et refuse de conclure tant qu'un seul check échoue.</p>
+    <div class="term"><pre><span class="cmd">python3 humanizer/verify.py</span>
+<span class="dim">[…]</span>
+<span class="dim">[15] Conformite doc officielle skill-authoring (12/08/2026)</span>
+  OK    corps de SKILL.md sous 500 lignes
+  OK    table de rationalisations presente
+  OK    constantes de gate.py justifiees
+<span class="dim">============================================================</span>
+<span class="ok">123 tests passés, 0 échecs</span>
+<span class="ok">Package vérifié.</span></pre></div>
+
+    <h3>Les 15 sections du harnais</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Section</th><th>Ce qu'elle garde</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Frontmatter</td><td>YAML parsable, nom du skill, description sous 1 024 caractères, outils autorisés maîtrisés</td></tr>
+          <tr><td>2</td><td>Intégrité des références</td><td>Chaque fichier cité dans SKILL.md existe, et aucun fichier du dossier ne reste orphelin</td></tr>
+          <tr><td>3</td><td>Couverture des commandes</td><td>Au moins 6 commandes déclarées, toutes routées, convention tiret simple et double documentée</td></tr>
+          <tr><td>4</td><td>Garde anti-fabrication</td><td>Les quatre verrous contre l'invention de chiffres, de dates et d'anecdotes sont présents mot pour mot</td></tr>
+          <tr><td>5</td><td>Couche française</td><td>FR1 à FR14 présents, 3 niveaux de confiance, faux positifs français documentés, routage FR déclaré</td></tr>
+          <tr><td>6</td><td>Préséance voix</td><td>La clause qui protège les traits d'un skill de marque chargé (hooks, antithèses, clôtures) existe</td></tr>
+          <tr><td>7</td><td>Moteur -empreinte</td><td>Seuils du corpus (3 textes, 1 200 mots), tests de discrimination et de bouclage, condition d'arrêt simulée</td></tr>
+          <tr><td>8</td><td>Exemples français</td><td>3 exemples travaillés avant et après, 3 surfaces, scores, colonne des traits conservés délibérément</td></tr>
+          <tr><td>9</td><td>Métriques non mesurables</td><td>Le skill s'interdit de citer burstiness ou perplexité qu'il ne peut pas calculer de l'intérieur</td></tr>
+          <tr><td>10</td><td>Jeu d'évaluation</td><td>Le fichier d'evals existe, avec cas négatifs, anti-fabrication, préséance et -empreinte couverts</td></tr>
+          <tr><td>11</td><td>Déclenchement</td><td>Chaque cas qui doit déclencher a un terme de son prompt dans la description ; le périmètre négatif est nommé</td></tr>
+          <tr><td>12</td><td>Maintenabilité</td><td>Version et amont tracés, CHANGELOG en manifeste de rebase avec toutes les divergences documentées</td></tr>
+          <tr><td>13</td><td>Vérificateur déterministe</td><td>Le scanner scan.py : tokenizer unicode, routé avant la réécriture, sépare prose truffée et prose humaine, mêmes chiffres sur deux passes</td></tr>
+          <tr><td>14</td><td>Porte chiffrée</td><td>Budgets, scan de cluster et numbers gate promis dans SKILL.md, puis gate.py exécuté sur 7 échantillons de contrôle</td></tr>
+          <tr><td>15</td><td>Conformité skill-authoring</td><td>Corps sous 500 lignes, table de rationalisations, constantes justifiées, terme canonique dominant</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>La section 14 mérite une lecture.</b> Elle ne vérifie pas seulement que <code>gate.py</code> existe : elle l'importe et le fait tourner sur des échantillons de contrôle (cluster à détecter, cadratin de signature, contrôle humain propre, citation à masquer, texte trop court). Si une constante de calibration bouge, ces échantillons cassent immédiatement.</div>
+  </div>
+</section>
+
+<section id="gate">
+  <div class="wrap">
+    <span class="kicker">Couche 2</span>
+    <h2>gate.py : la porte chiffrée</h2>
+    <p>Le modèle qui vient de réécrire un texte est le plus mal placé pour jurer que ce texte est propre. <code>gate.py</code> compte à sa place, de façon déterministe, et rend un verdict que personne ne peut négocier. C'est l'implémentation exécutable du numbers gate de SKILL.md.</p>
+
+    <h3>Les 6 compteurs</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Compteur</th><th>Seuil</th><th>Pourquoi ce seuil</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Tirets cadratins hors citations</td><td>0, signature comprise</td><td>Le tell le plus documenté ; l'exemption « mobilier de marque » exige une attestation du profil chargé</td></tr>
+          <tr><td>2</td><td>Contrastes durs (famille P9)</td><td>1 pour 200 mots</td><td>L'échelle d'un profil auteur réellement mesuré : 1 à 2 par texte de 200 à 350 mots</td></tr>
+          <tr><td>3</td><td>Atterrissages de paragraphe (P54)</td><td>ratio 0,25 max, jamais 2 d'affilée</td><td>Le mail fautif de référence sortait à 0,28 ; les contrôles humains sortaient à 0</td></tr>
+          <tr><td>4</td><td>Clusters locaux</td><td>0 fenêtre de 4 phrases à 2 familles</td><td>La taille du cluster réellement observé dans l'incident qui a calibré le script</td></tr>
+          <tr><td>5</td><td>Vocabulaire Tier 1, EN et FR</td><td>0 occurrence</td><td>« delve », « tapestry », « incontournable », « dans un monde où » : indéfendables en prose humaine</td></tr>
+          <tr><td>6</td><td>Contrat du profil de voix (--profile)</td><td>interdits 0, plafonds à la fréquence attestée</td><td>La signature d'un auteur est attestée à une fréquence, sur une surface : le check lit le contrat chiffré du bloc Voice et l'applique, citations toujours masquées</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Trois garde-fous d'ingénierie entourent ces comptes. Le contenu entre guillemets est masqué avant tout comptage, car un cadratin cité n'est pas un cadratin écrit. Sous 40 mots, le script refuse de juger. Et chaque constante du code est commentée avec sa provenance : toutes sont calibrées sur un corpus d'incident réel du 12/08/2026, rejouable via <code>traps.json</code>.</p>
+    <div class="term"><pre><span class="cmd">python3 humanizer/scripts/gate.py avant.txt</span>
+words=82  dashes=0  contrast=1/1  kickers=0/2 (run 0)  clusters=1  tier1=0
+  <span class="ko">VIOLATION: clusters=1</span>
+<span class="ko">FAIL</span>
+<span class="cmd">python3 humanizer/scripts/gate.py apres.txt</span>
+words=82  dashes=0  contrast=0/1  kickers=0/2 (run 0)  clusters=0  tier1=0
+<span class="ok">PASS</span></pre></div>
+    <div class="note"><b>Ce que la porte n'est pas :</b> un juge littéraire. Elle compte ce que le modèle doit montrer, rien de plus. Un texte peut la passer et rester médiocre ; il ne peut pas la passer en portant les tics qu'elle compte.</div>
+  </div>
+</section>
+
+<section id="evals" class="alt">
+  <div class="wrap">
+    <span class="kicker">Couche 3</span>
+    <h2>evals.fr.json : les cas de déclenchement</h2>
+    <p>11 cas rejouables qui vérifient trois choses : le skill se déclenche sur les bons prompts, il reste muet sur les mauvais, et il fait ce qu'il annonce une fois déclenché. Chaque cas porte une attente textuelle vérifiable à l'œil dans la sortie.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Cas</th><th>Vérifie</th><th>Attendu</th></tr></thead>
+        <tbody>
+          <tr><td><code>fr-trigger-direct</code></td><td>Déclenchement explicite en français</td><td>Charge le catalogue FR, supprime « dans un monde où » et « crucial », zéro cadratin</td></tr>
+          <tr><td><code>fr-trigger-indirect</code></td><td>Déclenchement sans mot-clé</td><td>« on dirait du ChatGPT non ? » suffit ; le skill demande le texte s'il manque</td></tr>
+          <tr><td><code>fr-participes</code></td><td>Détection FR1</td><td>Coupe les participes en chapelet sans signaler de tell anglais</td></tr>
+          <tr><td><code>fr-faux-positif</code></td><td>Français normal non signalé</td><td>Pronominal, passif ordinaire et « notamment » isolé passent sans remarque</td></tr>
+          <tr><td><code>fr-trop-court</code></td><td>Plancher de notation</td><td>Refuse de scorer un texte sous 40 mots</td></tr>
+          <tr><td><code>fr-anti-fabrication</code></td><td>Garde anti-invention</td><td>Aucun chiffre inventé pour « concrétiser » ; le skill dit ce qui manque</td></tr>
+          <tr><td><code>fr-preseance-voix</code></td><td>Préséance d'un skill de marque</td><td>Conserve le hook nominal et l'antithèse du style maison au lieu de les gommer</td></tr>
+          <tr><td><code>cmd-help</code></td><td>Routage des commandes</td><td>Affiche la liste des commandes et rien d'autre</td></tr>
+          <tr><td><code>cmd-empreinte-corpus-court</code></td><td>Condition d'arrêt de -empreinte</td><td>Exige 3 textes ; sous 1 200 mots, s'arrête sans produire de profil</td></tr>
+          <tr><td><code>no-trigger-code</code></td><td>Cas négatif : code</td><td>Ne se déclenche pas sur une tâche de code</td></tr>
+          <tr><td><code>no-trigger-traduction</code></td><td>Cas négatif : traduction</td><td>Ne se déclenche pas sur une traduction littérale</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Le rejeu est manuel, dans une session neuve avec le skill installé, sur <b>Haiku, Sonnet et Opus</b> : la sensibilité de déclenchement varie selon le modèle, et un cas qui passe sur Opus peut rater sur Haiku. La couverture entre les prompts d'eval et la description du skill est en plus vérifiée statiquement par la section 11 de <code>verify.py</code>.</p>
+  </div>
+</section>
+
+<section id="pieges">
+  <div class="wrap">
+    <span class="kicker">Couche 4</span>
+    <h2>traps.json : les pièges de régression</h2>
+    <p>13 pièges distillés d'échecs réels : une passe cosmétique sur un mail commercial anglais, un cadratin de signature exempté à tort, un cluster local invisible dans des totaux globaux propres, puis trois échecs de la v3 autour du scanner et du contrat de profil. Chaque cas suit le format d'eval officiel Anthropic, et les cas marqués <span class="pill gate">gate</span> sont vérifiables mécaniquement en passant la sortie à <code>gate.py</code>.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Piège</th><th>Juge</th><th>Ce qui ne doit plus jamais se reproduire</th></tr></thead>
+        <tbody>
+          <tr><td><code>trap-structural-no-dash</code></td><td><span class="pill gate">gate</span></td><td>Déclarer propre un texte sans cadratin mais saturé de contrastes et de punchlines</td></tr>
+          <tr><td><code>trap-signature-dash</code></td><td><span class="pill gate">gate</span></td><td>Exempter le cadratin d'une ligne de signature sans attestation du profil chargé</td></tr>
+          <tr><td><code>trap-local-cluster</code></td><td><span class="pill gate">gate</span></td><td>Laisser passer 2 familles structurelles en 4 phrases quand les totaux globaux passent</td></tr>
+          <tr><td><code>trap-surface-profile</code></td><td><span class="pill manual">manuel</span></td><td>Exporter dans un mail un trait attesté uniquement en post : la surface fait partie de l'attestation</td></tr>
+          <tr><td><code>trap-signature-density</code></td><td><span class="pill manual">manuel</span></td><td>Justifier 8 occurrences d'un trait attesté à 1 par texte : la fréquence fait partie de l'attestation</td></tr>
+          <tr><td><code>trap-false-positive-human</code></td><td><span class="pill gate">gate</span></td><td>Réécrire de force un mail humain concret qui passe la porte</td></tr>
+          <tr><td><code>trap-quoted-ai</code></td><td><span class="pill gate">gate</span></td><td>Compter ou réécrire les tells cités entre guillemets</td></tr>
+          <tr><td><code>trap-fabrication</code></td><td><span class="pill manual">manuel</span></td><td>Inventer un chiffre pour concrétiser une abstraction</td></tr>
+          <tr><td><code>trap-too-short</code></td><td><span class="pill gate">gate</span></td><td>Noter un texte sous 40 mots</td></tr>
+          <tr><td><code>trap-zero-punch</code></td><td><span class="pill gate">gate</span></td><td>Injecter des punchlines pour « humaniser » un texte plat : les seuils sont des plafonds, jamais des cibles</td></tr>
+          <tr><td><code>trap-scan-first</code></td><td><span class="pill manual">manuel</span></td><td>Analyser un texte sans exécuter scan.py d'abord : le score et les patterns du scanner se citent tels quels</td></tr>
+          <tr><td><code>trap-profile-frequence</code></td><td><span class="pill gate">gate</span></td><td>Garder 3 exemplaires d'une formule signature plafonnée à 1 par le contrat du profil</td></tr>
+          <tr><td><code>trap-voice-fabrication</code></td><td><span class="pill manual">manuel</span></td><td>Inventer un appel à l'action ou un engagement absent de la source au nom de la voix de l'auteur</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 id="protocole">Le protocole de rejeu A/B</h3>
+    <div class="steps">
+      <div class="step"><b>Session neuve</b><p>Ne jamais faire noter le skill par l'instance qui vient de l'éditer. Chaque query se rejoue dans une session vierge avec le skill installé.</p></div>
+
+      <div class="step"><b>Trois modèles</b><p>Rejouer sur Haiku, Sonnet et Opus. La sensibilité de déclenchement et la discipline de réécriture varient d'un modèle à l'autre.</p></div>
+
+      <div class="step"><b>Vérifier les assertions</b><p>Chaque piège liste ses comportements attendus un par un. On vérifie chacune d'entre elles plutôt que l'impression générale d'ensemble.</p></div>
+
+      <div class="step"><b>Passer la porte</b><p>Quand le piège est marqué gate, la sortie du modèle passe dans gate.py, et le verdict rendu ne se négocie pas.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="regle" class="statement">
+  <svg class="deco" width="420" height="420" viewBox="0 0 420 420" aria-hidden="true">
+    <g fill="none" stroke="#FDB81D" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M60 110 L210 210 L60 310"/>
+      <path d="M150 60 L330 210 L150 360"/>
+      <path d="M250 110 L370 210 L250 310"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <span class="kicker" style="color:#fff">La règle d'édition</span>
+    <h2>Toute nouvelle section de SKILL.md exige un piège qui échouait sans elle</h2>
+    <p>C'est du TDD documentaire, et c'est la règle qui empêche le skill de grossir en prose décorative. Si on ne sait pas écrire le piège, la section n'a pas de raison d'exister. Symétriquement, toute promesse chiffrée ajoutée au skill doit apparaître dans <code style="background:rgba(255,255,255,.18);color:#fff">verify.py</code>, pour qu'elle ne puisse plus disparaître silencieusement.</p>
+    <p>Et cette page suit la même règle : si un chiffre change dans la suite de tests, la page se met à jour dans le même commit. Sa propre prose française passe <code style="background:rgba(255,255,255,.18);color:#fff">gate.py --fr</code> : une ressource qui documente une porte chiffrée ne peut pas se permettre de la rater.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <div class="brand"><svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M10 5 L22 16 L10 27" fill="none" stroke="#FD7800" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>Catalia</div>
+      <p>Réduire l'incertitude. Libérer l'action.</p>
+      <p>Page statique, identique pour tous les visiteurs. Aucun formulaire, aucun tracking individuel, aucun paramètre d'URL porteur d'identité.</p>
+    </div>
+    <div>
+      <p><a href="https://github.com/Matthieusabourin2/humanizer-fr">Le dépôt humanizer-fr</a></p>
+      <p><a href="https://github.com/Aboudjem/humanizer-skill">Le skill amont (Aboudjem/humanizer-skill)</a></p>
+      <p><a href="https://humanizer-skill.vercel.app/">La page du skill amont</a></p>
+      <p><a href="https://www.catalia.fr">catalia.fr</a></p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

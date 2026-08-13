@@ -115,9 +115,19 @@ humanizer/
   evals/
     evals.fr.json                 cas de test à rejouer sur Haiku, Sonnet et Opus
     traps.json                    pièges de régression distillés d'échecs réels
+docs/
+  tests.md                        documentation de l'ensemble de la suite de tests
+site/
+  tests.html                      page de test publiable (statique, autonome), ressource catalia.fr
 ```
 
 Le CHANGELOG n'est pas décoratif : c'est un manifeste de rebase. Quand l'amont publie une version, on réapplique les divergences listées (D1–D26) et on relance `verify.py`.
+
+## Tests
+
+La suite tient en quatre couches, toutes documentées dans [`docs/tests.md`](docs/tests.md) : le harnais du paquet (`verify.py`, 123 checks), la porte chiffrée (`scripts/gate.py`, 6 compteurs déterministes, contrat de profil compris), les cas de déclenchement (`evals/evals.fr.json`, 11 cas) et les pièges de régression (`evals/traps.json`, 13 pièges, protocole de rejeu A/B).
+
+Une version publiable de cette documentation existe en page statique autonome : [`site/tests.html`](site/tests.html), destinée à être publiée comme ressource sur [catalia.fr](https://www.catalia.fr). Contrat de la page : ses chiffres se mettent à jour dans le même commit que le code, et sa prose française passe sa propre porte (`gate.py --fr` sort PASS sur le texte extrait — la commande de vérification est dans `docs/tests.md`).
 
 ## Généalogie et crédits
 
