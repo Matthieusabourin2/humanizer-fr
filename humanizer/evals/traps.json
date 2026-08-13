@@ -2,7 +2,7 @@
  "skills": [
   "humanizer"
  ],
- "version": "2.3.0-fr",
+ "version": "3.0.0-fr",
  "description": "Pieges de regression distilles d'echecs reels (12/08/2026 : passe cosmetique sur un mail commercial EN, cadratin de signature exempte a tort, cluster local non vu, contrainte de surface du profil ignoree). Chaque cas suit le format d'eval officiel Anthropic (query + expected_behavior). Les cas gate:true sont verifiables par scripts/gate.py sur la sortie.",
  "replay_protocol": "Protocole Claude A/B officiel : ne jamais faire noter le skill par l'instance qui vient de l'editer. Rejouer chaque query dans une session NEUVE avec le skill installe (Claude Code : claude -p \"<query>\" ; claude.ai : nouvelle conversation), sur Haiku, Sonnet et Opus, car la sensibilite varie selon le modele. Verifier chaque assertion d'expected_behavior, puis passer la sortie a scripts/gate.py quand gate:true. Regle d'edition (TDD documentaire) : toute nouvelle section du SKILL.md exige un piege ici qui echouait sans elle.",
  "cases": [
@@ -102,6 +102,39 @@
    "expected_behavior": [
     "Plafonds, pas cibles : le skill n'injecte PAS de punchlines ni d'antitheses pour 'humaniser'.",
     "gate.py PASS avant comme apres ; les retouches restent lexicales et de rythme si necessaires."
+   ]
+  },
+  {
+   "id": "trap-scan-first",
+   "gate": false,
+   "query": "/humanizer -score [paragraphe FR de 150+ mots charge en tells, dans un environnement avec execution de code]",
+   "expected_behavior": [
+    "Le modele execute scripts/scan.py AVANT toute analyse et cite son score et ses patterns tels quels.",
+    "Aucun chiffre de burstiness ou de score invente : les chiffres du rapport correspondent au JSON du scanner.",
+    "La passe de jugement couvre les groupes contextuels et le dit (couverture explicite), au lieu de s'arreter aux premiers patterns trouves.",
+    "Reference : v2.3, ou le scan reposait sur 'Scan all 54 patterns' sans procedure ni outil, et s'arretait de fait apres les hits evidents."
+   ]
+  },
+  {
+   "id": "trap-profile-frequence",
+   "gate": true,
+   "query": "Humanise ce texte avec --voice <profil charge dont le bloc gate declare une signature max:1 et un interdit 'en conclusion'> [texte source contenant 3 occurrences de la formule signature et un 'en conclusion']",
+   "expected_behavior": [
+    "La reecriture conserve la formule signature AU PLUS 1 fois (plafond FREQUENCE du profil), pas 3.",
+    "L'interdit du profil est absent de la sortie.",
+    "gate.py --profile humanizer-context.md sort 0 violation sur la sortie ; sur le texte source il sort 'signature au-dela du plafond' et 'interdit present'.",
+    "Reference : v2.3, ou le check 6 (profil) etait le seul non outille et restait a l'auto-notation."
+   ]
+  },
+  {
+   "id": "trap-voice-fabrication",
+   "gate": false,
+   "query": "Humanise avec --voice <profil dont R-06 impose 'clore par un retour concret (offre, lien)'> [texte source SANS aucune offre, lien ni contact]",
+   "expected_behavior": [
+    "La reecriture ne contient AUCUN appel a l'action, offre ou engagement invente ('ecrivez-moi', 'on regarde ca ensemble', un lien).",
+    "La regle de cloture du profil est sautee et le resume des changements le dit explicitement.",
+    "La position du texte source n'est pas inversee (si la source affirme un consensus, la reecriture ne le remplace pas par 'personne ne sait').",
+    "Reference : panel de juges du 13/08/2026 — la reecriture --voice avait invente un CTA, pousse par R-06/R-07 ; la garde anti-fabrication prime sur tout profil."
    ]
   }
  ]
