@@ -28,15 +28,14 @@ Un outil de contournement de détecteurs. La philosophie du skill : un texte bie
 
 ### claude.ai (Pro, Max, Team, Enterprise — avec l'exécution de code activée)
 
-1. Téléchargez ce dépôt (`Code > Download ZIP`), extrayez-le.
-2. Re-zippez le dossier `humanizer/` seul — le ZIP doit contenir `humanizer/` comme racine, avec `SKILL.md` dedans.
-3. Dans claude.ai : `Customize > Skills`, bouton `+`, uploadez le ZIP.
-4. Test : nouvelle conversation, tapez `/humanizer -help`.
+1. Téléchargez le skill prêt à l'emploi : [humanizer.zip](https://github.com/Matthieusabourin2/humanizer-fr/raw/main/dist/humanizer.zip).
+2. Dans claude.ai : `Customize > Skills`, bouton `+`, uploadez le ZIP tel quel.
+3. Test : nouvelle conversation, tapez `/humanizer -help`.
 
 ### Claude Code
 
 ```bash
-git clone https://github.com/VOTRE_COMPTE/humanizer-fr.git
+git clone https://github.com/Matthieusabourin2/humanizer-fr.git
 cp -r humanizer-fr/humanizer ~/.claude/skills/humanizer   # global
 # ou, dans un projet :
 cp -r humanizer-fr/humanizer .claude/skills/humanizer     # local au repo
