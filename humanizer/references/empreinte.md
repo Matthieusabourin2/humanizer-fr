@@ -156,7 +156,7 @@ Le bouclage auto-noté est faible : la même conscience qui a écrit les règles
 2. `### Règles` : les blocs [R-nn] de la Passe 4, classés par pouvoir discriminant décroissant.
 3. `### Paliers` : `discret` / `standard` / `marqué` avec les règles de chacun.
 4. `### Interdits` : le négatif de la Passe 3, en liste.
-5. `### Ce que humanizer ne touche pas` : les traits attestés dans ≥ 70 % du corpus que les catalogues **P1-P54 et FR1-FR14** prendraient pour des tells — triades voulues, parallélismes signature, phrases courtes isolées, clôtures rhétoriques, formules récurrentes, cadence d'atterrissage comprise (P54). Sans ce bloc, le skill efface au prochain passage la signature qu'il vient de mesurer.
+5. `### Ce que humanizer ne touche pas` : les traits attestés dans ≥ 70 % du corpus que les catalogues **P1-P56 et FR1-FR14** prendraient pour des tells — triades voulues, parallélismes signature, phrases courtes isolées, clôtures rhétoriques, formules récurrentes, cadence d'atterrissage comprise (P54). Sans ce bloc, le skill efface au prochain passage la signature qu'il vient de mesurer.
 6. **Le bloc gate** — la partie machine-vérifiable du contrat, consommée par `scripts/gate.py --profile` :
 
 ```json gate

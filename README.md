@@ -2,7 +2,7 @@
 
 Skill Claude qui détecte les motifs d'écriture IA et réécrit le texte dans une voix humaine — la vôtre, si vous lui donnez votre corpus. Fork français documenté de [Aboudjem/humanizer-skill](https://github.com/Aboudjem/humanizer-skill).
 
-*French fork of the humanizer skill: 54 AI-writing patterns + 14 French-specific ones, a 0–100 AI-tell score, 5 built-in voices, and an `-empreinte` command that builds a custom voice profile from your own writing corpus, with real measurements.*
+*French fork of the humanizer skill: 56 AI-writing patterns + 14 French-specific ones, a 0–100 AI-tell score, 5 built-in voices, and an `-empreinte` command that builds a custom voice profile from your own writing corpus, with real measurements.*
 
 **🧪 Démo en ligne : [catalia.fr/ressources/humanizer](https://www.catalia.fr/ressources/humanizer)** — collez un texte français, obtenez le score et le détail des motifs, 100 % dans votre navigateur (même moteur que `scripts/scan.py`, zéro envoi).
 
@@ -12,7 +12,7 @@ Un skill pour Claude (claude.ai, Claude Code, et tout éditeur qui lit des fichi
 
 Ce qu'il fait :
 
-- Détecte 54 motifs d'écriture IA (catalogue P1–P54) plus 14 motifs propres au français (FR1–FR14) : participes en chapelet, nominalisations vides, triades adjectivales décoratives, fausses gammes, clôtures génériques, tirets cadratins, uniformité rythmique…
+- Détecte 56 motifs d’écriture IA (catalogue P1–P56) plus 14 motifs propres au français (FR1–FR14) : participes en chapelet, nominalisations vides, triades adjectivales décoratives, fausses gammes, clôtures génériques, tirets cadratins, uniformité rythmique…
 - Attribue un score 0–100 de « tell IA » (plus bas = plus humain), avec la liste des motifs trouvés et où.
 - Réécrit dans une des 5 voix intégrées (`casual`, `professional`, `technical`, `warm`, `blunt`) ou dans une voix personnalisée.
 - Construit votre propre profil de voix depuis votre corpus réel avec `-empreinte` : règles mesurées, preuves citées, interdits, paliers d'intensité.
@@ -106,7 +106,7 @@ humanizer/
     scan.py                       scanner déterministe : patterns en regex, métriques, score 0-100
     gate.py                       porte chiffrée : cadratins, contrastes, kickers, clusters, tier 1, profil
   references/
-    patterns.md                   catalogue P1–P54 (anglais, hérité de l'amont)
+    patterns.md                   catalogue P1–P56 (anglais, hérité de l'amont)
     patterns.fr.md                catalogue FR1–FR14 + faux positifs français
     examples.fr.md                3 exemples travaillés, scores avant/après
     empreinte.md                  procédure -empreinte complète (6 passes, 2 tests)
@@ -131,7 +131,7 @@ Une version publiable de cette documentation existe en page statique autonome : 
 
 ## Généalogie et crédits
 
-Fork de [Aboudjem/humanizer-skill](https://github.com/Aboudjem/humanizer-skill) 0.5.0 (Adam Boudjemaa, MIT), lui-même héritier de [blader/humanizer](https://github.com/blader/humanizer) et adossé à [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing). Ce fork ajoute : le catalogue français et ses faux positifs, les exemples et évals FR, la commande `-empreinte` et son contrat de profil mesuré, les profils embarqués, la clause de préséance des skills de voix, le garde anti-fabrication re-durci, le scanner déterministe `scan.py`, la porte chiffrée `gate.py`, et `verify.py`.
+Fork de [Aboudjem/humanizer-skill](https://github.com/Aboudjem/humanizer-skill) 0.7.1 (Adam Boudjemaa, MIT), lui-même héritier de [blader/humanizer](https://github.com/blader/humanizer) et adossé à [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing). Ce fork ajoute : le catalogue français et ses faux positifs, les exemples et évals FR, la commande `-empreinte` et son contrat de profil mesuré, les profils embarqués, la clause de préséance des skills de voix, le garde anti-fabrication re-durci, le scanner déterministe `scan.py`, la porte chiffrée `gate.py`, et `verify.py`.
 
 ## Licence
 

@@ -1,6 +1,6 @@
 # Tells de l'IA en français (FR1 à FR14)
 
-Le catalogue P1-P54 du SKILL.md est calibré sur l'anglais. Ses listes de mots (`delve`, `tapestry`, `boasts`, `nestled`) ne déclenchent rien sur du texte français, et trois de ses règles ne s'y transposent pas du tout : P16 Title Case (la capitalisation française est déjà minuscule), P47 paires à trait d'union (règle typographique anglaise), P8 évitement de la copule (le français emploie `constituer`, `représenter`, `s'imposer comme` avec une légitimité différente de `serves as`).
+Le catalogue P1-P56 du SKILL.md est calibré sur l'anglais. Ses listes de mots (`delve`, `tapestry`, `boasts`, `nestled`) ne déclenchent rien sur du texte français, et trois de ses règles ne s'y transposent pas du tout : P16 Title Case (la capitalisation française est déjà minuscule), P47 paires à trait d'union (règle typographique anglaise), P8 évitement de la copule (le français emploie `constituer`, `représenter`, `s'imposer comme` avec une légitimité différente de `serves as`).
 
 Ce fichier remplace ces listes pour tout texte français. Les principes du SKILL.md restent valables : grappes plutôt qu'occurrences isolées, retenue plutôt que zèle, jamais de réécriture dans une citation ou du code.
 

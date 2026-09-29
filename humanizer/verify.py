@@ -240,7 +240,7 @@ if sc.exists():
 
 print("\n[14] Porte chiffree v2.2 (budgets, clusters, gate.py, pieges)")
 check("P54 present au catalogue", "P54: Kicker Cadence" in skill)
-check("compteur de patterns a 54", "Pattern catalog (54 total)" in skill and "P44 to P54" in skill)
+check("compteur de patterns a 56", "Pattern catalog (56 total)" in skill and "P44 to P56" in skill)
 check("section Density budgets presente", "### Density budgets (ceilings, not targets)" in skill)
 check("scan de cluster local present", "### The local cluster scan" in skill)
 check("numbers gate obligatoire en rewrite", "### The numbers gate (mandatory in rewrite and edit modes)" in skill)
