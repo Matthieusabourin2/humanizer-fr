@@ -100,7 +100,7 @@ Deux garde-fous structurants, hérités des régressions constatées en amont et
 humanizer/
   SKILL.md                        point d'entrée, 4 passes, garde-fous, préséance
   CHANGELOG.md                    manifeste de rebase : toutes les divergences vs l'amont
-  verify.py                       123 tests d'intégrité du paquet (python3 verify.py)
+  verify.py                       124 tests d'intégrité du paquet (python3 verify.py)
   scripts/
     scan.py                       scanner déterministe : patterns en regex, métriques, score 0-100
     gate.py                       porte chiffrée : cadratins, contrastes, kickers, clusters, tier 1, profil
@@ -120,11 +120,11 @@ site/
   tests.html                      page de test publiable (statique, autonome), ressource catalia.fr
 ```
 
-Le CHANGELOG n'est pas décoratif : c'est un manifeste de rebase. Quand l'amont publie une version, on réapplique les divergences listées (D1–D26) et on relance `verify.py`.
+Le CHANGELOG n'est pas décoratif : c'est un manifeste de rebase. Quand l'amont publie une version, on réapplique les divergences listées (D1–D28) et on relance `verify.py`.
 
 ## Tests
 
-La suite tient en quatre couches, toutes documentées dans [`docs/tests.md`](docs/tests.md) : le harnais du paquet (`verify.py`, 123 checks), la porte chiffrée (`scripts/gate.py`, 6 compteurs déterministes, contrat de profil compris), les cas de déclenchement (`evals/evals.fr.json`, 11 cas) et les pièges de régression (`evals/traps.json`, 13 pièges, protocole de rejeu A/B).
+La suite tient en quatre couches, toutes documentées dans [`docs/tests.md`](docs/tests.md) : le harnais du paquet (`verify.py`, 124 checks), la porte chiffrée (`scripts/gate.py`, 6 compteurs déterministes, contrat de profil compris), les cas de déclenchement (`evals/evals.fr.json`, 11 cas) et les pièges de régression (`evals/traps.json`, 13 pièges, protocole de rejeu A/B).
 
 Une version publiable de cette documentation existe en page statique autonome : [`site/tests.html`](site/tests.html), destinée à être publiée comme ressource sur [catalia.fr](https://www.catalia.fr). Contrat de la page : ses chiffres se mettent à jour dans le même commit que le code, et sa prose française passe sa propre porte (`gate.py --fr` sort PASS sur le texte extrait — la commande de vérification est dans `docs/tests.md`).
 

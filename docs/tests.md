@@ -6,7 +6,7 @@ La suite tient en quatre couches. Aucune ne juge la qualité rédactionnelle : c
 
 | Couche | Fichier | Ce qu'elle teste | Verdict | Exécution |
 |---|---|---|---|---|
-| Harnais du paquet | `humanizer/verify.py` | L'intégrité structurelle : tout ce que SKILL.md promet existe | 123 checks, sortie 0/1 | automatique, locale |
+| Harnais du paquet | `humanizer/verify.py` | L'intégrité structurelle : tout ce que SKILL.md promet existe | 124 checks, sortie 0/1 | automatique, locale |
 | Porte chiffrée | `humanizer/scripts/gate.py` | Une sortie du skill respecte les budgets de densité et le contrat du profil | PASS/FAIL déterministe | automatique, locale |
 | Cas de déclenchement | `humanizer/evals/evals.fr.json` | Le skill se déclenche (ou pas) sur les bons prompts | 11 cas, attentes textuelles | rejeu manuel multi-modèles |
 | Pièges de régression | `humanizer/evals/traps.json` | Les échecs réels déjà corrigés ne reviennent pas | 13 pièges, protocole A/B | rejeu manuel + gate.py |
@@ -26,7 +26,7 @@ python3 humanizer/verify.py            # depuis la racine du dépôt
 python3 verify.py                      # depuis humanizer/
 ```
 
-Sortie 0 si tout passe, 1 sinon, avec la liste des échecs. État au 13/08/2026 (v3.0.0-fr) : **123 tests passés, 0 échec**.
+Sortie 0 si tout passe, 1 sinon, avec la liste des échecs. État au 01/10/2026 (v3.1.0-fr) : **124 tests passés, 0 échec**.
 
 **Les 15 sections :**
 
@@ -43,9 +43,9 @@ Sortie 0 si tout passe, 1 sinon, avec la liste des échecs. État au 13/08/2026 
 | 9 | Métriques non mesurables | Le skill s'interdit de citer burstiness ou perplexité qu'il ne peut pas calculer ; plancher de 40 mots pour noter |
 | 10 | Jeu d'évaluation | `evals.fr.json` existe, au moins 10 cas, cas négatifs, anti-fabrication, préséance et `-empreinte` couverts |
 | 11 | Déclenchement | Chaque cas d'eval qui doit déclencher a au moins un terme de son prompt dans la description du frontmatter ; le périmètre négatif est nommé |
-| 12 | Maintenabilité | Version et amont tracés dans le frontmatter, CHANGELOG en manifeste de rebase (divergences D1–D26, procédure, retraits amont) |
+| 12 | Maintenabilité | Version et amont tracés dans le frontmatter, CHANGELOG en manifeste de rebase (divergences D1–D28 numérotées sans doublon, version amont du frontmatter citée, procédure, retraits amont) |
 | 13 | Vérificateur déterministe | `scan.py` : tokenizer unicode, routé avant la réécriture dans SKILL.md, sépare prose truffée (> 40) et prose humaine (< 20), détecte FR1/FR5/FR7, mêmes chiffres sur deux passes |
-| 14 | Porte chiffrée v2.2 | P54 au catalogue, budgets de densité, scan de cluster, numbers gate obligatoire, et exécution réelle de `gate.py` sur 7 échantillons de contrôle |
+| 14 | Porte chiffrée v2.2 | Catalogue à 56 patterns (P54 compris), budgets de densité, scan de cluster, numbers gate obligatoire, et exécution réelle de `gate.py` sur 7 échantillons de contrôle |
 | 15 | Conformité skill-authoring | Corps de SKILL.md sous 500 lignes, table de rationalisations, constantes de `gate.py` justifiées, terme canonique dominant |
 
 La section 14 mérite une lecture : elle ne vérifie pas seulement que `gate.py` existe, elle l'importe et le fait tourner sur des échantillons de contrôle (cluster à détecter, cadratin de signature, tier 1 FR, contrôle humain propre, citation à masquer, texte trop court). Si une constante de calibration bouge, ces échantillons cassent.
