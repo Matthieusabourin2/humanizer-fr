@@ -63,7 +63,7 @@ discret: [R-01] · standard: [R-01] [R-03] · marqué: toutes
 <constructions absentes du corpus, à ne jamais introduire>
 
 ### Ce que humanizer ne touche pas
-<les traits signature que le catalogue P1-P54 / FR1-FR14 confondrait avec des tells>
+<les traits signature que le catalogue P1-P56 / FR1-FR14 confondrait avec des tells>
 
 ```json gate
 {"surface": "...", "dashes_max": 0, "contrast_budget": 2, "kicker_ratio_max": 0.4,

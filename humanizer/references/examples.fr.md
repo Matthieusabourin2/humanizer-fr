@@ -80,13 +80,13 @@ Score scan.py après : **0/100**.
 
 **Après**
 
-> Le parcours tient en trois temps. On cartographie d'abord ce que vos équipes font réellement de leurs journées, service par service. On construit ensuite les cas d'usage à partir de cette matière, pas à partir d'un catalogue. On mesure enfin sur deux indicateurs choisis avec vous en amont, pas sur un questionnaire de satisfaction.
+> Le parcours tient en trois temps, construits sur mesure. Il vise une chose : que vos collaborateurs se servent réellement des outils dans leur travail. Le retour sur investissement se mesure, et le dispositif s'ajuste en cours de route au lieu d'attendre la fin du programme.
 
-**Conservé délibérément** — la structure ternaire, parce qu'ici les trois temps existent réellement dans le dispositif ; c'est une description, pas une figure de style. La règle FR5 vise les triades **adjectivales** décoratives, jamais une énumération d'étapes réelles.
+**Conservé délibérément** — les « trois temps », le sur-mesure, le retour sur investissement mesurable et l'amélioration continue : ce sont les seules affirmations de la source, et chacune survit sous une forme vérifiable. Rien n'est ajouté pour les remplacer.
 
-**Point de vigilance sur la contrainte anti-fabrication** — la version réécrite n'ajoute aucun chiffre, aucun délai, aucun nom d'indicateur. Le Concretizer aurait été tenté d'écrire « mesure du temps de rédaction divisé par deux » : cette donnée n'est pas dans la source, donc elle ne peut pas entrer. Sur une proposition commerciale, une invention chiffrée est une faute contractuelle, pas un défaut de style.
+**Point de vigilance sur la contrainte anti-fabrication** — la source annonce trois temps sans dire lesquels, et la réécriture ne les nomme pas. Le Concretizer est ici tenté au plus fort : écrire « on cartographie, on construit les cas d'usage, on mesure sur deux indicateurs » rendrait le paragraphe bien plus vivant, et chacun de ces mots serait inventé, « deux » compris. Une version antérieure de cet exemple a commis exactement cette faute. Le remède n'est pas stylistique : c'est à l'auteur de la proposition de nommer les trois temps, et le skill doit le lui signaler plutôt que de les écrire à sa place. Sur une proposition commerciale, une invention chiffrée ou une étape de méthode inventée est une faute contractuelle, pas un défaut de style.
 
-Score scan.py après : **23/100**.
+Score scan.py après : **13/100** (mesuré le 01/10/2026 ; la version fautive antérieure sortait à 23).
 
 ---
 

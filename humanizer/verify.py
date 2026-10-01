@@ -183,9 +183,13 @@ chg = ROOT / "CHANGELOG.md"
 check("CHANGELOG.md existe", chg.exists())
 if chg.exists():
     ch = chg.read_text(encoding="utf-8")
-    check("version amont citee dans le changelog", "0.5.0" in ch)
+    up_v = re.search(r"\d+\.\d+\.\d+", meta.get("metadata", {}).get("upstream") or "")
+    check("version amont du frontmatter citee dans le changelog",
+          bool(up_v) and up_v.group(0) in ch, up_v.group(0) if up_v else "aucune")
     divs = re.findall(r"\*\*(D\d+) ", ch)
     check("au moins 9 divergences documentees", len(divs) >= 9, str(divs))
+    dup = sorted({d for d in divs if divs.count(d) > 1})
+    check("divergences numerotees sans doublon", not dup, str(dup))
     check("procedure de rebase enoncee", "rebase" in ch.lower())
     check("retraits amont documentes", "Retiré de l'amont" in ch)
     # chaque fichier ajoute par rapport a l'amont doit etre cite dans le manifeste
@@ -240,7 +244,7 @@ if sc.exists():
 
 print("\n[14] Porte chiffree v2.2 (budgets, clusters, gate.py, pieges)")
 check("P54 present au catalogue", "P54: Kicker Cadence" in skill)
-check("compteur de patterns a 54", "Pattern catalog (54 total)" in skill and "P44 to P54" in skill)
+check("compteur de patterns a 56", "Pattern catalog (56 total)" in skill and "P44 to P56" in skill)
 check("section Density budgets presente", "### Density budgets (ceilings, not targets)" in skill)
 check("scan de cluster local present", "### The local cluster scan" in skill)
 check("numbers gate obligatoire en rewrite", "### The numbers gate (mandatory in rewrite and edit modes)" in skill)

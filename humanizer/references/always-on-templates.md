@@ -67,4 +67,4 @@ and quoted text exactly as written.
 
 ---
 
-These templates cover the highest-signal rules only. For the full catalog (54 patterns + 14 French-specific), voice profiles, and scoring, run the `/humanizer` skill on demand.
+These templates cover the highest-signal rules only. For the full catalog (56 patterns + 14 French-specific), voice profiles, and scoring, run the `/humanizer` skill on demand.

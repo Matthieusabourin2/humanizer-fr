@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La suite de tests du humanizer-fr | Catalia</title>
-<meta name="description" content="123 vérifications de paquet, une porte chiffrée à 6 compteurs, 11 cas de déclenchement, 13 pièges de régression : comment le skill humanizer-fr se teste. Ressource Catalia.">
+<meta name="description" content="124 vérifications de paquet, une porte chiffrée à 6 compteurs, 11 cas de déclenchement, 13 pièges de régression : comment le skill humanizer-fr se teste. Ressource Catalia.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M10 5 L22 16 L10 27' fill='none' stroke='%23FD7800' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -246,11 +246,11 @@ footer p{margin-bottom:6px;max-width:56ch}
     </g>
   </svg>
   <div class="wrap">
-    <span class="eyebrow">Ressource Catalia · humanizer-fr 3.0.0-fr</span>
+    <span class="eyebrow">Ressource Catalia · humanizer-fr 3.1.0-fr</span>
     <h1>La suite de tests du humanizer&#8209;fr</h1>
     <p class="lead">Un skill est de la prose qui prétend gouverner un modèle. Sans tests, cette prose dérive sans que personne ne le voie. Cette page documente les quatre couches de vérification du skill humanizer-fr, leurs seuils, et la règle qui gouverne leur évolution.</p>
     <div class="stats">
-      <div class="stat"><b>123</b><span>vérifications du paquet (verify.py)</span></div>
+      <div class="stat"><b>124</b><span>vérifications du paquet (verify.py)</span></div>
       <div class="stat"><b>6</b><span>compteurs déterministes (gate.py)</span></div>
       <div class="stat"><b>11</b><span>cas de déclenchement (evals.fr.json)</span></div>
       <div class="stat"><b>13</b><span>pièges de régression (traps.json)</span></div>
@@ -287,7 +287,7 @@ footer p{margin-bottom:6px;max-width:56ch}
         <h3>Le harnais du paquet</h3>
         <p><code>verify.py</code> vérifie que tout ce que SKILL.md promet existe réellement : références, commandes, garde-fous, seuils. Il échoue bruyamment.</p>
 
-        <span class="verdict">123 checks · sortie 0 ou 1 · exécution locale</span>
+        <span class="verdict">124 checks · sortie 0 ou 1 · exécution locale</span>
       </div>
       <div class="card">
         <span class="num">2</span>
@@ -326,7 +326,7 @@ footer p{margin-bottom:6px;max-width:56ch}
   OK    table de rationalisations presente
   OK    constantes de gate.py justifiees
 <span class="dim">============================================================</span>
-<span class="ok">123 tests passés, 0 échecs</span>
+<span class="ok">124 tests passés, 0 échecs</span>
 <span class="ok">Package vérifié.</span></pre></div>
 
     <h3>Les 15 sections du harnais</h3>
@@ -345,7 +345,7 @@ footer p{margin-bottom:6px;max-width:56ch}
           <tr><td>9</td><td>Métriques non mesurables</td><td>Le skill s'interdit de citer burstiness ou perplexité qu'il ne peut pas calculer de l'intérieur</td></tr>
           <tr><td>10</td><td>Jeu d'évaluation</td><td>Le fichier d'evals existe, avec cas négatifs, anti-fabrication, préséance et -empreinte couverts</td></tr>
           <tr><td>11</td><td>Déclenchement</td><td>Chaque cas qui doit déclencher a un terme de son prompt dans la description ; le périmètre négatif est nommé</td></tr>
-          <tr><td>12</td><td>Maintenabilité</td><td>Version et amont tracés, CHANGELOG en manifeste de rebase avec toutes les divergences documentées</td></tr>
+          <tr><td>12</td><td>Maintenabilité</td><td>Version et amont tracés, CHANGELOG en manifeste de rebase, divergences documentées et numérotées sans doublon</td></tr>
           <tr><td>13</td><td>Vérificateur déterministe</td><td>Le scanner scan.py : tokenizer unicode, routé avant la réécriture, sépare prose truffée et prose humaine, mêmes chiffres sur deux passes</td></tr>
           <tr><td>14</td><td>Porte chiffrée</td><td>Budgets, scan de cluster et numbers gate promis dans SKILL.md, puis gate.py exécuté sur 7 échantillons de contrôle</td></tr>
           <tr><td>15</td><td>Conformité skill-authoring</td><td>Corps sous 500 lignes, table de rationalisations, constantes justifiées, terme canonique dominant</td></tr>
